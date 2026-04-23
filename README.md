@@ -63,3 +63,7 @@ I'm still unsure if it's better than running regular build tools inside the deve
 [Turning ANYTHING into Rocks - Blender Geometry Nodes - YouTube](https://www.youtube.com/watch?v=QA13LPCZ3dM)
 
 [Voronoi diagram - Wikipedia](https://en.wikipedia.org/wiki/Voronoi_diagram)
+
+### Other
+
+[Pakz001/Raylib-Examples](https://github.com/Pakz001/Raylib-Examples)
