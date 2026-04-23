@@ -26,11 +26,9 @@ I'm still unsure if it's better than running regular build tools inside the deve
 
 [Build a package using Nix - Zero to Nix from Determinate Systems](https://zero-to-nix.com/start/nix-build/)
 
-#### Raylib
+#### Nix and C++ interaction
 
 [Raylib development environment in Nix/NixOS · GitHub Gist](https://gist.github.com/gabrieldlima/0bf82c01ce54976ffc6f900639c36f51)
-
-#### Nix and C++ interaction
 
 [C - Official NixOS Wiki](https://wiki.nixos.org/wiki/C)
 
@@ -41,3 +39,27 @@ I'm still unsure if it's better than running regular build tools inside the deve
 [nix-templates/cpp · MordragT/nix-templates](https://github.com/MordragT/nix-templates/tree/322aef20cabb300e05692a444b172ff8c421f524/cpp)
 
 [dev-templates/c-cpp · the-nix-way/dev-templates](https://github.com/the-nix-way/dev-templates/tree/aa21c6a8e9f39866c99be606a7da5d6dafc1db6c/c-cpp)
+
+#### C++
+
+[How to use clangd C/C++ LSP in any project · GitHub Gist](https://gist.github.com/Strus/042a92a00070a943053006bf46912ae9)
+
+[raylib/projects/CMake/CMakeLists.txt · raysan5/raylib](https://github.com/raysan5/raylib/blob/e9caf5a9811a9c1a126398795915b13ef488618e/projects/CMake/CMakeLists.txt)
+
+[SasLuca/raylib-cmake-template](https://github.com/SasLuca/raylib-cmake-template)
+
+### Stone path generation
+
+[Dual Mesh Node - Blender 5.1 Manual](https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/mesh/operations/dual_mesh.html)
+
+[dual_mesh/add_dual_mesh.py · BorisTheBrave/dual_mesh](https://github.com/BorisTheBrave/dual_mesh/blob/2664191f85ea65444fc5e8d18f96d85b9f2735a4/add_dual_mesh.py)
+
+[Procedural stone path with geometry nodes : r/blender](https://www.reddit.com/r/blender/comments/utrfym/procedural_stone_path_with_geometry_nodes/)
+
+[Procedural stone path with geometry nodes, the second one : r/blender](https://www.reddit.com/r/blender/comments/uuvush/procedural_stone_path_with_geometry_nodes_the/)
+
+[How to Make Procedural Cobblestone In Blender! | Geo Nodes Tutorial - YouTube](https://www.youtube.com/watch?v=zO_2gAogtZo)
+
+[Turning ANYTHING into Rocks - Blender Geometry Nodes - YouTube](https://www.youtube.com/watch?v=QA13LPCZ3dM)
+
+[Voronoi diagram - Wikipedia](https://en.wikipedia.org/wiki/Voronoi_diagram)
