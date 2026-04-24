@@ -11,22 +11,17 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
 
-      # raylib is standalone/portable so I'll just download it.
-      raylib = pkgs.fetchFromGitHub {
-        owner = "raysan5";
-        repo = "raylib";
-        rev = "6.0";
-        sha256 = "sha256-8+6MDTMc7Spix4ndAUzp51Q5iWcl7pQmyXuV2RutnOk=";
-      };
-
       raylib-cpp = pkgs.fetchFromGitHub {
         owner = "RobLoach";
         repo = "raylib-cpp";
-        rev = "v6.0.0";
-        sha256 = "sha256-24olApL/q3DHguMnjuBJrLFsFb5yIgMtk43GG2tZXUQ=";
+        rev = "v5.5.1";
+        sha256 = "sha256-+ieOrXetRE9gPhfnnkiI0YUOD/m+pOJmzjcQJPOTkLo=";
       };
 
       commonPackages = with pkgs; [
+        raylib
+        raygui
+
         # https://nixos.org/manual/nixpkgs/stable/#cmake
         # Automatically changes the configure phase to use cmake.
         cmake
@@ -45,7 +40,6 @@
       ];
 
       envVars = {
-        RAYLIB_PATH = "${raylib}";
         RAYLIB_CPP_PATH = "${raylib-cpp}";
       };
     in

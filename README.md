@@ -64,6 +64,8 @@ I'm still unsure if it's better than running regular build tools inside the deve
 
 [Voronoi diagram - Wikipedia](https://en.wikipedia.org/wiki/Voronoi_diagram)
 
+[newbie: Whats the best method to draw 2d irregular shapes with curved edges? : r/raylib](https://www.reddit.com/r/raylib/comments/165vwux/newbie_whats_the_best_method_to_draw_2d_irregular/)
+
 ### Other
 
 [Pakz001/Raylib-Examples](https://github.com/Pakz001/Raylib-Examples)
