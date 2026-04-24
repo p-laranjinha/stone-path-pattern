@@ -1,43 +1,36 @@
-#include "raylib.h"
+#include "raylib-cpp.hpp" // IWYU pragma: export
+#include <iostream>
 
-int main(void) {
+int main() {
   // Initialization
-  //--------------------------------------------------------------------------------------
-  const int screenWidth = 800;
-  const int screenHeight = 450;
+  int screenWidth = 800;
+  int screenHeight = 450;
+  int fontSize = 20;
+  int spacing = 2;
+  std::string text = "Press 's' to take a screenshot or 'esc' to exit.";
 
-  InitWindow(screenWidth, screenHeight, "raylib example.");
+  raylib::Window window(screenWidth, screenHeight,
+                        "raylib [core] example - basic window");
 
-  SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-  //--------------------------------------------------------------------------------------
+  raylib::Font font = GetFontDefault();
+  raylib::Vector2 fontPosition(
+      screenWidth / 2.0f -
+          MeasureTextEx(font, text.c_str(), fontSize, spacing).x / 2,
+      screenHeight / 2.0f - fontSize / 2.0f);
+
+  SetTargetFPS(60);
 
   // Main game loop
-  while (!WindowShouldClose()) // Detect window close button or ESC key
-  {
-    // Update
-    //----------------------------------------------------------------------------------
-    if (IsKeyPressed(KEY_S)) {
-      TakeScreenshot("screenshot.png");
-      // Be sure to not place this function inside a loop where
-      // it saves a screenshot every frame!
+  while (!window.ShouldClose()) { // Detect window close button or ESC key
+    if (raylib::Keyboard::IsKeyPressed(KEY_S)) {
+      raylib::TakeScreenshot("screenshot.png");
     }
-
-    //----------------------------------------------------------------------------------
-    // Draw
-    //----------------------------------------------------------------------------------
-    BeginDrawing();
-
-    ClearBackground(RAYWHITE);
-    DrawText("Press key 's' to take a screenshot..", 200, 200, 20, GRAY);
-
-    EndDrawing();
-    //----------------------------------------------------------------------------------
+    while (window.Drawing()) {
+      window.ClearBackground(raylib::Color::RayWhite());
+      font.DrawText(text, fontPosition, fontSize, spacing,
+                    raylib::Color::LightGray());
+    }
   }
-
-  // De-Initialization
-  //--------------------------------------------------------------------------------------
-  CloseWindow(); // Close window and OpenGL context
-  //--------------------------------------------------------------------------------------
 
   return 0;
 }

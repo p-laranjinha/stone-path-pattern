@@ -19,10 +19,18 @@
         sha256 = "sha256-8+6MDTMc7Spix4ndAUzp51Q5iWcl7pQmyXuV2RutnOk=";
       };
 
+      raylib-cpp = pkgs.fetchFromGitHub {
+        owner = "RobLoach";
+        repo = "raylib-cpp";
+        rev = "v6.0.0";
+        sha256 = "sha256-24olApL/q3DHguMnjuBJrLFsFb5yIgMtk43GG2tZXUQ=";
+      };
+
       commonPackages = with pkgs; [
         # https://nixos.org/manual/nixpkgs/stable/#cmake
         # Automatically changes the configure phase to use cmake.
         cmake
+        ninja_1_11
 
         libGL
         # X11 dependencies
@@ -38,6 +46,7 @@
 
       envVars = {
         RAYLIB_PATH = "${raylib}";
+        RAYLIB_CPP_PATH = "${raylib-cpp}";
       };
     in
     {
