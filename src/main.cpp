@@ -16,6 +16,14 @@ int main() {
 
   raylib::Color foreground = raylib::Color::Black();
 
+  Camera camera = {0};
+  camera.position = (Vector3){0.0f, 3.0f, 3.0f};
+  camera.target = (Vector3){0.0f, 0.0f, 0.0f};
+  camera.up = (Vector3){0.0f, 1.0f, 0.0f};
+  camera.fovy = 45.0f;
+  camera.projection = CAMERA_PERSPECTIVE;
+  raylib::Model model = LoadModelFromMesh(GenMeshPlane(1, 1, 1, 1));
+
   // Main game loop
   while (!window.ShouldClose()) { // Detect window close button or ESC key
     if (raylib::Keyboard::IsKeyPressed(KEY_S)) {
@@ -24,18 +32,12 @@ int main() {
     while (window.Drawing()) {
       window.ClearBackground(raylib::Color::RayWhite());
 
-      int screen_width = window.GetWidth();
-      int screen_height = window.GetHeight();
-      int square_width = (screen_width - padding * 2) / count;
-      int square_height = (screen_height - padding * 2) / count;
-
-      for (int i = 0; i < count; i++) {
-        raylib::Vector2 start(padding + square_width * i,
-                              padding + square_height * i);
-        raylib::Vector2 end(padding + square_width * (i + 1),
-                            padding + square_height * i);
-        foreground.DrawLine(start, end, thickness);
-      }
+      BeginMode3D(camera);
+      DrawModelWiresEx(model, (Vector3){0.0f, 0.0f, 0.0f},
+                       (Vector3){0.5f, 1.0f, 0.0f}, 0.0f,
+                       (Vector3){1.0f, 1.0f, 1.0f}, DARKGRAY);
+      DrawGrid(10, 1.0f);
+      EndMode3D();
     }
   }
 
