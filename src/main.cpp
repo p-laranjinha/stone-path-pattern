@@ -1,25 +1,44 @@
-#include "raylib-cpp.hpp" // IWYU pragma: export
+#include <iostream>
+#include <map>
+
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
-#include <iostream>
+#include "raylib-cpp.hpp" // IWYU pragma: export
 
-raylib::Color GetStyleColor(GuiDefaultProperty prop) {
-  return GetColor(GuiGetStyle(DEFAULT, prop));
+using namespace std;
+
+template <typename _>
+void DrawEdges(map<array<float, 4>, _> edges, int max_edge_x, int max_edge_y,
+               int thickness, int screen_width, int screen_height,
+               int padding) {
+  screen_width = screen_width - padding * 2;
+  screen_height = screen_height - padding * 2;
+  for (const auto &[key, __] : edges) {
+    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL))
+        .DrawLine(
+            raylib::Vector2(key[0] * screen_width / max_edge_x + padding,
+                            key[1] * screen_height / max_edge_y + padding),
+            raylib::Vector2(key[2] * screen_width / max_edge_y + padding,
+                            key[3] * screen_height / max_edge_y + padding),
+            thickness);
+  }
 }
 
 int main() {
   // Initialization
-  int initial_screen_width = 800;
-  int initial_screen_height = 450;
-  int padding = 10;
+  int padding = 5;
   int thickness = 3;
   int count = 10;
-
-  // SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-  raylib::Window window(initial_screen_width, initial_screen_height,
-                        "stone-path-pattern");
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+  raylib::Window window(800, 800, "stone-path-pattern");
   window.SetTargetFPS(120);
   GuiLoadStyle("assets/style.rgs");
+
+  map<array<float, 4>, vector<float>> edges = {
+      {{0, 0, 0, 1}, {0}},
+      {{0, 0, 1, 0}, {0}},
+      {{0, 1, 1, 0}, {0}},
+  };
 
   // Main game loop
   while (!window.ShouldClose()) { // Detect window close button or ESC key
@@ -28,8 +47,11 @@ int main() {
     }
 
     while (window.Drawing()) {
-      window.ClearBackground(GetStyleColor(BACKGROUND_COLOR));
+      window.ClearBackground(
+          raylib::Color(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
       window.DrawFPS(10, 10);
+      DrawEdges(edges, 1, 1, thickness, window.GetRenderWidth(),
+                window.GetRenderHeight(), padding);
     }
   }
 
