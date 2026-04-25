@@ -11,6 +11,11 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
 
+      raygui-style = builtins.fetchurl {
+        url = "https://github.com/raysan5/raygui/raw/refs/heads/master/styles/genesis/style_genesis.rgs";
+        sha256 = "sha256:1zbh24hlzy8cnqg8qm9b4gjp8zxf7dpgwrqw76jh27386dbab8h3";
+      };
+
       raylib-cpp = pkgs.fetchFromGitHub {
         owner = "RobLoach";
         repo = "raylib-cpp";
@@ -81,6 +86,8 @@
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath packages;
           shellHook = ''
             ln -sf result/compile_commands.json ./compile_commands.json
+            mkdir -p ./assets
+            ln -sf ${raygui-style} ./assets/style.rgs
 
             echo
             echo 'Run "nix build" to generate the "compile_commands.json" used by the LSP (clang).'
