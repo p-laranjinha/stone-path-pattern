@@ -1,3 +1,5 @@
+#include "patterns/grid.hpp"
+#include "types.hpp"
 #include <iostream>
 #include <map>
 
@@ -6,9 +8,10 @@
 #include "raylib-cpp.hpp" // IWYU pragma: export
 
 using namespace std;
+using namespace types;
 
 template <typename _>
-void DrawEdges(map<array<float, 4>, _> edges, int max_edge_x, int max_edge_y,
+void DrawEdges(map<edge, _> edges, int max_edge_x, int max_edge_y,
                int thickness, int screen_width, int screen_height,
                int padding) {
   screen_width = screen_width - padding * 2;
@@ -16,10 +19,10 @@ void DrawEdges(map<array<float, 4>, _> edges, int max_edge_x, int max_edge_y,
   for (const auto &[key, __] : edges) {
     raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL))
         .DrawLine(
-            raylib::Vector2(key[0] * screen_width / max_edge_x + padding,
-                            key[1] * screen_height / max_edge_y + padding),
-            raylib::Vector2(key[2] * screen_width / max_edge_y + padding,
-                            key[3] * screen_height / max_edge_y + padding),
+            raylib::Vector2(key[0][0] * screen_width / max_edge_x + padding,
+                            key[0][1] * screen_height / max_edge_y + padding),
+            raylib::Vector2(key[1][0] * screen_width / max_edge_y + padding,
+                            key[1][1] * screen_height / max_edge_y + padding),
             thickness);
   }
 }
@@ -34,12 +37,6 @@ int main() {
   window.SetTargetFPS(120);
   GuiLoadStyle("assets/style.rgs");
 
-  map<array<float, 4>, vector<float>> edges = {
-      {{0, 0, 0, 1}, {0}},
-      {{0, 0, 1, 0}, {0}},
-      {{0, 1, 1, 0}, {0}},
-  };
-
   // Main game loop
   while (!window.ShouldClose()) { // Detect window close button or ESC key
     if (IsKeyPressed(KEY_S)) {
@@ -50,7 +47,7 @@ int main() {
       window.ClearBackground(
           raylib::Color(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
       window.DrawFPS(10, 10);
-      DrawEdges(edges, 1, 1, thickness, window.GetRenderWidth(),
+      DrawEdges(GridPattern(), 1, 1, thickness, window.GetRenderWidth(),
                 window.GetRenderHeight(), padding);
     }
   }
