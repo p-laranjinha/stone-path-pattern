@@ -1,8 +1,6 @@
-#include "dual_mesh.hpp"
+#include "utils.hpp"
 #include "patterns/grid.hpp"
 #include "types.hpp"
-#include <iostream>
-#include <map>
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
@@ -10,21 +8,6 @@
 
 using namespace std;
 using namespace Types;
-
-void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
-               int screen_width, int screen_height, int padding) {
-  screen_width = screen_width - padding * 2;
-  screen_height = screen_height - padding * 2;
-  for (const auto &[key, _] : edges) {
-    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL))
-        .DrawLine(
-            raylib::Vector2(key[0][0] * screen_width / max_edge_x + padding,
-                            key[0][1] * screen_height / max_edge_y + padding),
-            raylib::Vector2(key[1][0] * screen_width / max_edge_y + padding,
-                            key[1][1] * screen_height / max_edge_y + padding),
-            thickness);
-  }
-}
 
 int main() {
   // Initialization
