@@ -1,7 +1,5 @@
 #include "../types.hpp"
-#include <map>
-#include <vector>
 
 using namespace std;
 using namespace types;
-map<edge, vector<vertex>> GridPattern();
+PatternWire GridPattern(int max_x, int max_y);
