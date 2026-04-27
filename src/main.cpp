@@ -1,6 +1,7 @@
-#include "utils.hpp"
 #include "patterns/grid.hpp"
+#include "patterns/triangle_grid.hpp"
 #include "types.hpp"
+#include "utils.hpp"
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
@@ -31,7 +32,7 @@ int main() {
 
       int max_x = 10;
       int max_y = 10;
-      PatternWire wire = gridPattern(max_x, max_y);
+      PatternWire wire = triangleGridPattern(max_x, max_y);
       PatternWire dual = dualMesh(wire);
       DrawEdges(dual, max_x, max_y, thickness, window.GetRenderWidth(),
                 window.GetRenderHeight(), padding);

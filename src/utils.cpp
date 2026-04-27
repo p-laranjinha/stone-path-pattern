@@ -21,6 +21,10 @@ void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
   }
 }
 
+Point triangleCenter(Triangle t) {
+  return {(t[0][0] + t[1][0] + t[2][0]) / 3, (t[0][1] + t[1][1] + t[2][1]) / 3};
+}
+
 Edge sortEdge(Edge edge) {
   if (edge[0][0] < edge[1][0]) {
     return edge;
