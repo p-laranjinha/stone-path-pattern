@@ -1,3 +1,4 @@
+#include "dual_mesh.hpp"
 #include "patterns/grid.hpp"
 #include "types.hpp"
 #include <iostream>
@@ -8,7 +9,7 @@
 #include "raylib-cpp.hpp" // IWYU pragma: export
 
 using namespace std;
-using namespace types;
+using namespace Types;
 
 void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
                int screen_width, int screen_height, int padding) {
@@ -32,7 +33,7 @@ int main() {
   int count = 10;
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   raylib::Window window(800, 800, "stone-path-pattern");
-  window.SetTargetFPS(120);
+  window.SetTargetFPS(1000);
   GuiLoadStyle("assets/style.rgs");
 
   // Main game loop
@@ -44,12 +45,15 @@ int main() {
     while (window.Drawing()) {
       window.ClearBackground(
           raylib::Color(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
-      window.DrawFPS(10, 10);
+
       int max_x = 10;
       int max_y = 10;
-      PatternWire wire = GridPattern(max_x, max_y);
-      DrawEdges(wire, max_x, max_y, thickness, window.GetRenderWidth(),
+      PatternWire wire = gridPattern(max_x, max_y);
+      PatternWire dual = dualMesh(wire);
+      DrawEdges(dual, max_x, max_y, thickness, window.GetRenderWidth(),
                 window.GetRenderHeight(), padding);
+
+      window.DrawFPS(10, 10);
     }
   }
 
