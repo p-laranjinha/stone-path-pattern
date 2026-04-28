@@ -33,11 +33,16 @@ int main() {
       int max_x = 10;
       int max_y = 10;
       PatternWire wire = triangleGridPattern(max_x, max_y);
-      PatternWire dual = dualMesh(wire);
-      DrawEdges(dual, max_x, max_y, thickness, window.GetRenderWidth(),
-                window.GetRenderHeight(), padding);
+      PatternWire dual = dualMeshWithBoundary(wire);
 
-      window.DrawFPS(10, 10);
+      DrawEdges(wire, max_x, max_y, thickness, window.GetRenderWidth(),
+                window.GetRenderHeight(), padding,
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL)));
+      DrawEdges(dual, max_x, max_y, thickness, window.GetRenderWidth(),
+                window.GetRenderHeight(), padding,
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
+
+      // window.DrawFPS(10, 10);
     }
   }
 
