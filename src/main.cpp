@@ -1,3 +1,4 @@
+#include "patterns/alt_triangle_grid.hpp"
 #include "patterns/grid.hpp"
 #include "patterns/triangle_grid.hpp"
 #include "types.hpp"
@@ -32,17 +33,17 @@ int main() {
 
       int max_x = 15;
       int max_y = 10;
-      PatternWire wire = triangleGridPattern(max_x, max_y);
+      PatternWire wire = alternatingTriangleGridPattern(max_x, max_y);
       PatternWire dual = dualMeshWithBoundary(wire);
 
       DrawEdges(wire, max_x, max_y, thickness, window.GetRenderWidth(),
                 window.GetRenderHeight(), padding,
-                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL)));
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_DISABLED)));
       DrawEdges(dual, max_x, max_y, thickness, window.GetRenderWidth(),
                 window.GetRenderHeight(), padding,
                 raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
 
-      window.DrawFPS(10, 10);
+      // window.DrawFPS(10, 10);
     }
   }
 
