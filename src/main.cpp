@@ -30,7 +30,7 @@ int main() {
       window.ClearBackground(
           raylib::Color(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
-      int max_x = 10;
+      int max_x = 15;
       int max_y = 10;
       PatternWire wire = triangleGridPattern(max_x, max_y);
       PatternWire dual = dualMeshWithBoundary(wire);
@@ -42,7 +42,7 @@ int main() {
                 window.GetRenderHeight(), padding,
                 raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
 
-      // window.DrawFPS(10, 10);
+      window.DrawFPS(10, 10);
     }
   }
 

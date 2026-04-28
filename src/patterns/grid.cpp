@@ -5,7 +5,7 @@ using namespace Types;
 PatternWire gridPattern(int max_x, int max_y) {
   PatternWire wire;
   for (float x = 0; x < max_x; x++) {
-    for (float y = 0; y < max_x; y++) {
+    for (float y = 0; y < max_y; y++) {
       vector<Edge> edges = {
           {{{x, y}, {x + 1, y}}},         //
           {{{x, y}, {x, y + 1}}},         //
