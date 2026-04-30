@@ -4,6 +4,7 @@
 #include "patterns/triangle_grid.hpp"
 #include "types.hpp"
 #include "utils.hpp"
+#include <functional>
 
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
@@ -18,7 +19,7 @@ int main() {
   int gui_panel_width = 400;
   float gui_padding = 20;
   float gui_input_width = gui_panel_width - gui_padding * 2;
-  float text_size = 20;
+  float text_size = 18;
 
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   raylib::Window window(1000 + gui_panel_width, 1000, "stone-path-pattern");
@@ -39,13 +40,34 @@ int main() {
   bool max_y_edit = false;
 
   int pattern_choice = 3;
+  int pattern_scroll_index = 0;
   bool show_original_pattern = false;
   bool hide_pattern = false;
   bool highlight_boundary = false;
 
+  vector<tuple<string, function<PatternWire()>>> patterns = {
+      {"Grid", [&]() -> PatternWire { return gridPattern(max_x, max_y); }},
+      {"Triangle",
+       [&]() -> PatternWire { return triangleGridPattern(max_x, max_y); }},
+      {"Alternating triangle",
+       [&]() -> PatternWire {
+         return alternatingTriangleGridPattern(max_x, max_y);
+       }},
+      {"Alternating triangle 2",
+       [&]() -> PatternWire {
+         return alternatingTriangleGridPattern2(max_x, max_y);
+       }},
+  };
+  string pattern_choices;
+  for (int i = 0; i < patterns.size(); i++) {
+    pattern_choices += get<0>(patterns[i]);
+    if (i < patterns.size() - 1) {
+      pattern_choices += ";";
+    };
+  }
+
   // Main game loop
   while (!window.ShouldClose()) { // Detect window close button or ESC key
-
     if (GuiButton({window.GetRenderWidth() - gui_padding - 160,
                    window.GetRenderHeight() - gui_padding - text_size, 160,
                    text_size},
@@ -56,21 +78,7 @@ int main() {
     int pattern_height = window.GetRenderHeight() - padding * 2;
     float gui_start_x = window.GetRenderWidth() - gui_panel_width + gui_padding;
 
-    PatternWire wire;
-    switch (pattern_choice) {
-    case 0:
-      wire = gridPattern(max_x, max_y);
-      break;
-    case 1:
-      wire = triangleGridPattern(max_x, max_y);
-      break;
-    case 2:
-      wire = alternatingTriangleGridPattern(max_x, max_y);
-      break;
-    case 3:
-      wire = alternatingTriangleGridPattern2(max_x, max_y);
-      break;
-    }
+    PatternWire wire = get<1>(patterns[pattern_choice])();
     PatternWire dual = dualMesh(wire);
     PatternWire dual_with_boundary = dualMeshWithBoundary(wire);
 
@@ -89,11 +97,11 @@ int main() {
                  text_size},
                 "Highlight boundary", &highlight_boundary);
 
-      GuiLabel({gui_start_x, gui_padding + text_size * 9, gui_input_width,
+      GuiLabel({gui_start_x, gui_padding + text_size * 9, gui_input_width / 4,
                 text_size},
                "Max X:");
       if (GuiValueBox({gui_start_x, gui_padding + text_size * 10,
-                       gui_input_width, text_size},
+                       gui_input_width / 4, text_size},
                       "", &tmp_max_x, 1, 1000, max_x_edit)) {
         max_x_edit = !max_x_edit;
         if (!max_x_edit) {
@@ -101,11 +109,12 @@ int main() {
         }
       }
 
-      GuiLabel({gui_start_x, gui_padding + text_size * 13, gui_input_width,
-                text_size},
+      GuiLabel({gui_start_x + gui_input_width / 4, gui_padding + text_size * 9,
+                gui_input_width / 4, text_size},
                "Max Y:");
-      if (GuiValueBox({gui_start_x, gui_padding + text_size * 14,
-                       gui_input_width, text_size},
+      if (GuiValueBox({gui_start_x + gui_input_width / 4,
+                       gui_padding + text_size * 10, gui_input_width / 4,
+                       text_size},
                       "", &tmp_max_y, 1, 1000, max_y_edit)) {
         max_y_edit = !max_y_edit;
         if (!max_y_edit) {
@@ -113,11 +122,12 @@ int main() {
         }
       }
 
-      GuiLabel({gui_start_x, gui_padding + text_size * 17, gui_input_width,
-                text_size},
+      GuiLabel({gui_start_x + gui_input_width / 2, gui_padding + text_size * 9,
+                gui_input_width / 2, text_size},
                "Line thickness:");
-      if (GuiValueBox({gui_start_x, gui_padding + text_size * 18,
-                       gui_input_width, text_size},
+      if (GuiValueBox({gui_start_x + gui_input_width / 2,
+                       gui_padding + text_size * 10, gui_input_width / 2,
+                       text_size},
                       "", &tmp_thickness, 1, 100, thickness_edit)) {
         thickness_edit = !thickness_edit;
         if (!thickness_edit) {
@@ -125,14 +135,13 @@ int main() {
         }
       }
 
-      GuiLabel({gui_start_x, gui_padding + text_size * 21, gui_input_width,
+      GuiLabel({gui_start_x, gui_padding + text_size * 13, gui_input_width,
                 text_size},
                "Pattern:");
-      GuiDropdownBox(
-          {gui_start_x, gui_padding + text_size * 22, gui_input_width,
-           text_size},
-          "Grid;Triangle;Alternating Triangle;Alternating Triangle 2",
-          &pattern_choice, true);
+      GuiListView({gui_start_x, gui_padding + text_size * 14, gui_input_width,
+                   float(text_size * 7)},
+                  pattern_choices.c_str(), &pattern_scroll_index,
+                  &pattern_choice);
 
       if (show_original_pattern) {
         DrawEdges(wire, max_x, max_y, thickness, pattern_width, pattern_height,
