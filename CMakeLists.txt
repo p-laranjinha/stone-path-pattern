@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.11)
 # Has to be the same as the 'pname' on 'flake.nix'.
-project(stone-path CXX)
+project(stone-path-pattern CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -31,4 +31,4 @@ target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib raylib_cpp)
 
-install(TARGETS stone-path DESTINATION bin)
+install(TARGETS stone-path-pattern DESTINATION bin)

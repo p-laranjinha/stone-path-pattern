@@ -51,7 +51,7 @@
     {
       packages.${system}.default = pkgs.stdenv.mkDerivation (
         {
-          pname = "stone-path";
+          pname = "stone-path-pattern";
           version = "0.0.0";
           src = ./.;
           nativeBuildInputs =
