@@ -3,7 +3,7 @@
 using namespace Types;
 
 void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
-               int screen_width, int screen_height, int padding,
+               int width, int height, int start_x, int start_y,
                raylib::Color color);
 
 Point triangleCenter(Triangle t);

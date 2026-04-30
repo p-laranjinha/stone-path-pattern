@@ -7,17 +7,14 @@ using namespace std;
 using namespace Types;
 
 void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
-               int screen_width, int screen_height, int padding,
+               int width, int height, int start_x, int start_y,
                raylib::Color color) {
-  screen_width = screen_width - padding * 2;
-  screen_height = screen_height - padding * 2;
   for (const auto &[key, _] : edges) {
-    color.DrawLine(
-        raylib::Vector2(key[0][0] * screen_width / max_edge_x + padding,
-                        key[0][1] * screen_height / max_edge_y + padding),
-        raylib::Vector2(key[1][0] * screen_width / max_edge_x + padding,
-                        key[1][1] * screen_height / max_edge_y + padding),
-        thickness);
+    color.DrawLine(raylib::Vector2(key[0][0] * width / max_edge_x + start_x,
+                                   key[0][1] * height / max_edge_y + start_y),
+                   raylib::Vector2(key[1][0] * width / max_edge_x + start_x,
+                                   key[1][1] * height / max_edge_y + start_y),
+                   thickness);
   }
 }
 
