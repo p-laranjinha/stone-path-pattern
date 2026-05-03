@@ -52,16 +52,21 @@ PatternWire dualMesh(PatternWire initial_wire) {
 PatternWire dualMeshWithBoundary(PatternWire initial_wire) {
   PatternWire new_wire;
   for (auto [edge, centers] : initial_wire) {
+    // If an edge only has 1 center, it is an outer edge, and the center is an
+    //  outer vertex of the dual mesh.
+    // This outer vertex then needs to be connected to the boundary.
     if (centers.size() < 2) {
-      // If an edge only has 1 center, it is an outer edge, and the center is an
-      //  outer vertex of the dual mesh.
-      // This outer vertex then needs to be connected to the boundary.
       Point center = centers[0];
+
+      // We use the edge's center as a vertex for the new connecting edge.
       Point edge_center = {(edge[0][0] + edge[1][0]) / 2,
                            (edge[0][1] + edge[1][1]) / 2};
       new_wire[{center, edge_center}].push_back(edge[0]);
       new_wire[{center, edge_center}].push_back(edge[1]);
-      new_wire[edge].push_back(edge_center);
+
+      // We generate a new outside edges from the old one.
+      new_wire[{edge[0], edge_center}].push_back(edge[0]);
+      new_wire[{edge[1], edge_center}].push_back(edge[1]);
       continue;
     }
     Edge new_edge = sortEdge({centers[0], centers[1]});
@@ -70,4 +75,44 @@ PatternWire dualMeshWithBoundary(PatternWire initial_wire) {
     }
   }
   return new_wire;
+}
+
+// This should be included in the pattern generation and/or in the dual mesh
+// process for efficiency but I'll make it separate and maybe include it in the
+// other places later.
+PatternPreFill wireToPolylines(PatternWire wire) {
+  PatternPrePreFill adjacentVertices;
+  for (auto [edge, centers] : wire) {
+    for (Point center : centers) {
+      adjacentVertices[center][edge[0]].push_back(edge[1]);
+      adjacentVertices[center][edge[1]].push_back(edge[0]);
+    }
+  }
+  PatternPreFill polylines;
+  for (auto [center, adjacencies] : adjacentVertices) {
+    if (adjacencies.size() < 3) {
+      continue;
+    }
+    Polyline polyline;
+    // Start the polyline.
+    Point start_point = adjacencies.begin()->first;
+    polyline.push_back(adjacencies[start_point][0]);
+    polyline.push_back(start_point);
+    polyline.push_back(adjacencies[start_point][1]);
+    for (int i = 0; i < adjacencies.size() - 3; i++) {
+      // Getting this here so that it stays the same even after push_back()
+      // inside the next for loop.
+      Point other_adj = polyline.end()[-2];
+      // Get the adjacent vertices to the last vertex added to the polyline.
+      for (Point point : adjacencies[polyline.back()]) {
+        // If the adjacent vertex isn't in the polyline, add it.
+        if (point != other_adj) {
+          polyline.push_back(point);
+          break;
+        }
+      }
+    }
+    polylines[center] = polyline;
+  }
+  return polylines;
 }

@@ -141,6 +141,7 @@ int main() {
     }
     PatternWire dual = dualMesh(wire);
     PatternWire dual_with_boundary = dualMeshWithBoundary(wire);
+    PatternPreFill polylines = wireToPolylines(dual_with_boundary);
 
     while (window.Drawing()) {
       window.ClearBackground(

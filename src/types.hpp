@@ -21,11 +21,12 @@ using Triangle = array<Point, 3>;
 //  help in implementing the dual mesh process.
 using PatternWire = map<Edge, vector<Point>>;
 
-// Hint: map<CENTER, map<VERTEX, array<ADJACENT_VERTEX, 2>>>.
+// Hint: map<CENTER, map<VERTEX, vector<ADJACENT_VERTEX>>>.
 // This is a mid-process data structure used to save all vertices belonging to a
 //  polygon and their adjacent vertices.
 // This should only require being used during the dual mesh process.
-using PatternPrePreFill = map<Point, map<Point, array<Point, 2>>>;
+// I'm using vector instead of array<2> just so I can use push_back().
+using PatternPrePreFill = map<Point, map<Point, vector<Point>>>;
 
 // Hint: map<CENTER, Polyline>.
 // This is a mid-process data structure used to save a polygon's full wire.

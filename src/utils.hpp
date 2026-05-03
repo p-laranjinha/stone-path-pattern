@@ -11,3 +11,5 @@ Point triangleCenter(Triangle t);
 PatternWire dualMesh(PatternWire initial_wire);
 
 PatternWire dualMeshWithBoundary(PatternWire initial_wire);
+
+PatternPreFill wireToPolylines(PatternWire wire);
