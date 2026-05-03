@@ -6,6 +6,9 @@ void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
                int width, int height, int start_x, int start_y,
                raylib::Color color);
 
+void DrawFill(PatternFill fill, int max_edge_x, int max_edge_y, int width,
+              int height, int start_x, int start_y, raylib::Color color);
+
 Point triangleCenter(Triangle t);
 
 PatternWire dualMesh(PatternWire initial_wire);
@@ -13,3 +16,5 @@ PatternWire dualMesh(PatternWire initial_wire);
 PatternWire dualMeshWithBoundary(PatternWire initial_wire);
 
 PatternPreFill wireToPolylines(PatternWire wire);
+
+PatternFill polylinesTriangulation(PatternPreFill polylines);

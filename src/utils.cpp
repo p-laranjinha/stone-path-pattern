@@ -2,6 +2,7 @@
 
 #include "raygui.h"
 #include "raylib-cpp.hpp" // IWYU pragma: export
+#include <algorithm>
 
 using namespace std;
 using namespace Types;
@@ -17,6 +18,22 @@ void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
                    thickness);
   }
 }
+
+void DrawFill(PatternFill fill, int max_edge_x, int max_edge_y, int width,
+              int height, int start_x, int start_y, raylib::Color color) {
+  for (auto [center, triangles] : fill) {
+    for (Triangle triangle : triangles) {
+      float fade = 0.2 + float(rand()) / RAND_MAX * 0.8;
+      DrawTriangle({triangle[0][0] * width / max_edge_x + start_x,
+                    triangle[0][1] * height / max_edge_y + start_y},
+                   {triangle[1][0] * width / max_edge_x + start_x,
+                    triangle[1][1] * height / max_edge_y + start_y},
+                   {triangle[2][0] * width / max_edge_x + start_x,
+                    triangle[2][1] * height / max_edge_y + start_y},
+                   color.Fade(fade));
+    }
+  }
+};
 
 Point triangleCenter(Triangle t) {
   return {(t[0][0] + t[1][0] + t[2][0]) / 3, (t[0][1] + t[1][1] + t[2][1]) / 3};
@@ -115,4 +132,78 @@ PatternPreFill wireToPolylines(PatternWire wire) {
     polylines[center] = polyline;
   }
   return polylines;
+}
+
+bool isConvex(Point prev, Point point, Point next) {
+  float z_cross_product = (next[1] - prev[1]) * (point[0] - prev[0]) -
+                          (next[0] - prev[0]) * (point[1] - prev[1]);
+  return z_cross_product < 0;
+}
+
+bool isInside(Point prev, Point point, Point next, Point new_point) {
+  return !isConvex(prev, new_point, point) &&
+         !isConvex(point, new_point, next) && !isConvex(next, new_point, prev);
+}
+
+bool isEar(Point prev, Point point, Point next, vector<Point> polyline) {
+  if (isConvex(prev, point, next)) {
+    for (int i = 0; i < polyline.size() - 2; i++) {
+      if (polyline[i] != prev && polyline[i] != point && polyline[i] != next) {
+        if (isInside(prev, point, next, polyline[i])) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+  return false;
+}
+
+// Using the ear-clipping algorithm because while it isn't the most efficient,
+//  it is "easy" to implement and returns decent looking triangulations.
+// I'm adapting:
+//  https://github.com/ivanfratric/polypartition/blob/b000a4a2a72b46e1305fb6e95b080448d7c12049/src/polypartition.cpp#L429-L519
+PatternFill polylinesTriangulation(PatternPreFill polylines) {
+  PatternFill pattern_fill;
+  for (auto [center, polyline] : polylines) {
+    if (polyline.size() < 3) {
+      continue;
+    }
+    if (polyline.size() == 3) {
+      pattern_fill[center].push_back({polyline[0], polyline[1], polyline[0]});
+      continue;
+    }
+
+    // https://stackoverflow.com/a/1165943
+    // https://github.com/ivanfratric/polypartition/issues/49
+    // I need to revert counter-clockwise polylines because the calculations and
+    // the raylib draw depend on the order.
+    float is_clockwise_sum = 0;
+    for (int i = 0; i < polyline.size(); i++) {
+      Point prev = (i != 0) ? polyline[i - 1] : polyline.back();
+      Point point = polyline[i];
+      is_clockwise_sum += (point[0] - prev[0]) * (point[1] + point[1]);
+    }
+    bool is_clockwise = is_clockwise_sum > 0;
+    if (!is_clockwise) {
+      reverse(polyline.begin(), polyline.end());
+    }
+
+    int i = 0;
+    // If polyline has 3 points left theres only a triangle left.
+    while (polyline.size() > 3) {
+      Point prev = (i != 0) ? polyline[i - 1] : polyline.back();
+      Point point = polyline[i];
+      Point next = (i != polyline.size() - 1) ? polyline[i + 1] : polyline[0];
+      if (isEar(prev, point, next, polyline)) {
+        pattern_fill[center].push_back({prev, point, next});
+        polyline.erase(polyline.begin() + i);
+        i = 0;
+        continue;
+      }
+      i++;
+    }
+    pattern_fill[center].push_back({polyline[0], polyline[1], polyline[2]});
+  }
+  return pattern_fill;
 }
