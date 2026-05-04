@@ -143,7 +143,7 @@ int main() {
 void DrawPattern() {
   get<2>(patterns[pattern_choice])();
   PatternWire wire = get<1>(patterns[pattern_choice])();
-  randomizeCenterPositions(wire, 0.3);
+  randomizeCenterPositions(wire, 0.1);
 
   if (show_original_pattern && hide_pattern) {
     PatternPreFill polylines = wireToPolylines(wire);
@@ -199,16 +199,14 @@ void DrawDefaultGUI() {
   //               "Take screenshot")) {
   //   TakeScreenshot("screenshot.png");
   // }
-  GuiToggle({gui_start_x, gui_padding, gui_input_width, text_size},
-            "Show original pattern", &show_original_pattern);
+  GuiCheckBox({gui_start_x, gui_padding, text_size, text_size},
+              "Show original pattern", &show_original_pattern);
 
-  GuiToggle(
-      {gui_start_x, gui_padding + text_size * 3, gui_input_width, text_size},
-      "Hide pattern", &hide_pattern);
+  GuiCheckBox({gui_start_x, gui_padding + text_size * 3, text_size, text_size},
+              "Hide pattern", &hide_pattern);
 
-  GuiToggle(
-      {gui_start_x, gui_padding + text_size * 6, gui_input_width, text_size},
-      "Highlight boundary", &highlight_boundary);
+  GuiCheckBox({gui_start_x, gui_padding + text_size * 6, text_size, text_size},
+              "Highlight boundary", &highlight_boundary);
 
   GuiLabel({gui_start_x, gui_padding + text_size * 9, gui_input_width / 4,
             text_size},

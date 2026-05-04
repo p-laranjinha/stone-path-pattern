@@ -36,11 +36,11 @@ void DrawFill(PatternFill fill, int max_edge_x, int max_edge_y, int width,
 };
 
 void DrawIntInput(IntInputValue &v, Rectangle bounds, int min, int max) {
-  if (GuiValueBox(bounds, "", &get<1>(v), min, max, get<2>(v))) {
+  if (GuiSpinner(bounds, "", &get<1>(v), min, max, get<2>(v))) {
     get<2>(v) = !get<2>(v);
-    if (!get<2>(v)) {
-      get<0>(v) = get<1>(v);
-    }
+  }
+  if (!get<2>(v)) {
+    get<0>(v) = get<1>(v);
   }
 }
 
