@@ -23,9 +23,9 @@ float text_size = 18;
 
 IntInputValue thickness = {3, 3, false};
 IntInputValue max_x = {15, 15, false};
-IntInputValue max_y = {10, 10, false};
+IntInputValue max_y = {15, 15, false};
 IntInputValue seed = {1, 1, false};
-IntInputValue center_max_offset = {10, 10, false};
+IntInputValue center_max_offset = {20, 20, false};
 
 int pattern_choice = 0;
 int pattern_scroll_index = 0;
