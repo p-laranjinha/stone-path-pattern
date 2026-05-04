@@ -37,7 +37,7 @@ int pattern_width;
 int pattern_height;
 
 // Specific pattern options.
-IntInputValue seed = {0, 0, false};
+IntInputValue seed = {1, 1, false};
 IntInputValue diagonal_chance = {50, 50, false};
 IntInputValue right_diagonal_chance = {25, 25, false};
 
@@ -65,7 +65,7 @@ int main() {
          DrawIntInput(seed,
                       {gui_start_x, gui_padding + text_size * 24,
                        gui_input_width / 3, text_size},
-                      0, 99999);
+                      1, 99999);
          GuiLabel({gui_start_x + gui_input_width / 3,
                    gui_padding + text_size * 23, gui_input_width / 3,
                    text_size},
