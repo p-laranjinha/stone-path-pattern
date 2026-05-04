@@ -54,7 +54,7 @@ int main() {
   patterns = {
       {"Random triangle",
        [&]() -> PatternWire {
-         return randTrianglePattern(get<0>(max_x), get<0>(max_y), get<0>(seed),
+         return randTrianglePattern(get<0>(max_x), get<0>(max_y),
                                     float(get<0>(diagonal_chance)) / 100,
                                     float(get<0>(right_diagonal_chance)) / 100);
        },
@@ -114,6 +114,8 @@ int main() {
   }
 
   while (!window.ShouldClose()) { // Detect window close button or ESC key
+    srand(get<0>(seed));
+
     pattern_width = window.GetRenderWidth() - padding * 2 - gui_panel_width;
     pattern_height = window.GetRenderHeight() - padding * 2;
     gui_start_x = window.GetRenderWidth() - gui_panel_width + gui_padding;
@@ -141,8 +143,6 @@ int main() {
 void DrawPattern() {
   get<2>(patterns[pattern_choice])();
   PatternWire wire = get<1>(patterns[pattern_choice])();
-
-  srand(get<0>(seed));
 
   if (show_original_pattern && hide_pattern) {
     PatternPreFill polylines = wireToPolylines(wire);

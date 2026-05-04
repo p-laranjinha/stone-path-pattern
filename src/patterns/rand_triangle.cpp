@@ -4,10 +4,8 @@
 
 using namespace std;
 using namespace Types;
-PatternWire randTrianglePattern(int max_x, int max_y, int seed,
-                                float diagonal_chance,
+PatternWire randTrianglePattern(int max_x, int max_y, float diagonal_chance,
                                 float right_diagonal_chance) {
-  srand(seed);
   PatternWire wire;
   for (float x = 0; x < max_x; x++) {
     for (float y = 0; y < max_y; y++) {
