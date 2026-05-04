@@ -136,19 +136,28 @@ int main() {
     gui_start_x = window.GetRenderWidth() - gui_panel_width + gui_padding;
 
     PatternWire wire;
+    PatternWire dual;
+    PatternWire dual_with_boundary;
+    PatternPreFill polylines;
+    PatternFill fill;
     if (pattern_choice >= 0) {
       wire = get<1>(patterns[pattern_choice])();
+      dual = dualMesh(wire);
+      dual_with_boundary = dualMeshWithBoundary(wire);
+      polylines = wireToPolylines(dual);
+      fill = polylinesTriangulation(polylines);
     }
-    PatternWire dual = dualMesh(wire);
-    PatternWire dual_with_boundary = dualMeshWithBoundary(wire);
-    PatternPreFill polylines = wireToPolylines(dual);
-    PatternFill fill = polylinesTriangulation(polylines);
 
     while (window.Drawing()) {
       window.ClearBackground(
           raylib::Color(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
       DrawDefaultGUI();
+
+      if (pattern_choice < 0) {
+        continue;
+      }
+
       get<2>(patterns[pattern_choice])();
 
       srand(seed);

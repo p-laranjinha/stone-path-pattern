@@ -133,7 +133,12 @@ PatternPreFill wireToPolylines(PatternWire wire) {
         }
       }
     }
-    polylines[center] = polyline;
+    // Check if polyline closes.
+    for (Point point : adjacencies[polyline.back()]) {
+      if (point == polyline[0]) {
+        polylines[center] = polyline;
+      }
+    }
   }
   return polylines;
 }
