@@ -135,19 +135,6 @@ int main() {
     int pattern_height = window.GetRenderHeight() - padding * 2;
     gui_start_x = window.GetRenderWidth() - gui_panel_width + gui_padding;
 
-    PatternWire wire;
-    PatternWire dual;
-    PatternWire dual_with_boundary;
-    PatternPreFill polylines;
-    PatternFill fill;
-    if (pattern_choice >= 0) {
-      wire = get<1>(patterns[pattern_choice])();
-      dual = dualMesh(wire);
-      dual_with_boundary = dualMeshWithBoundary(wire);
-      polylines = wireToPolylines(dual);
-      fill = polylinesTriangulation(polylines);
-    }
-
     while (window.Drawing()) {
       window.ClearBackground(
           raylib::Color(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
@@ -160,22 +147,50 @@ int main() {
 
       get<2>(patterns[pattern_choice])();
 
-      srand(seed);
-      DrawFill(fill, max_x, max_y, pattern_width, pattern_height, padding,
-               padding, raylib::Color::DarkBlue());
+      PatternWire wire = get<1>(patterns[pattern_choice])();
 
-      if (show_original_pattern) {
+      srand(seed);
+
+      if (show_original_pattern && hide_pattern) {
+        PatternPreFill polylines = wireToPolylines(wire);
+        PatternFill fill = polylinesTriangulation(polylines);
+        DrawFill(fill, max_x, max_y, pattern_width, pattern_height, padding,
+                 padding, raylib::Color::DarkBlue());
         DrawEdges(wire, max_x, max_y, thickness, pattern_width, pattern_height,
                   padding, padding,
-                  raylib::Color(GuiGetStyle(
-                      DEFAULT, (hide_pattern) ? BORDER_COLOR_FOCUSED
-                                              : BORDER_COLOR_PRESSED)));
+                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
       }
       if (!hide_pattern) {
-        DrawEdges(dual_with_boundary, max_x, max_y, thickness, pattern_width,
-                  pattern_height, padding, padding,
-                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
-        if (highlight_boundary) {
+        PatternWire dual_with_boundary = dualMeshWithBoundary(wire);
+        if (!highlight_boundary) {
+          PatternPreFill polylines = wireToPolylines(dual_with_boundary);
+          PatternFill fill = polylinesTriangulation(polylines);
+          DrawFill(fill, max_x, max_y, pattern_width, pattern_height, padding,
+                   padding, raylib::Color::DarkBlue());
+          if (show_original_pattern) {
+            DrawEdges(
+                wire, max_x, max_y, thickness, pattern_width, pattern_height,
+                padding, padding,
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+          }
+          DrawEdges(dual_with_boundary, max_x, max_y, thickness, pattern_width,
+                    pattern_height, padding, padding,
+                    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
+        } else {
+          PatternWire dual = dualMesh(wire);
+          PatternPreFill polylines = wireToPolylines(dual);
+          PatternFill fill = polylinesTriangulation(polylines);
+          DrawFill(fill, max_x, max_y, pattern_width, pattern_height, padding,
+                   padding, raylib::Color::DarkBlue());
+          if (show_original_pattern) {
+            DrawEdges(
+                wire, max_x, max_y, thickness, pattern_width, pattern_height,
+                padding, padding,
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+          }
+          DrawEdges(dual_with_boundary, max_x, max_y, thickness, pattern_width,
+                    pattern_height, padding, padding,
+                    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
           DrawEdges(dual, max_x, max_y, thickness, pattern_width,
                     pattern_height, padding, padding,
                     raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL)));
