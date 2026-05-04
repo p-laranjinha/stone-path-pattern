@@ -49,9 +49,13 @@ static void DrawDefaultGUI(void);
 int main() {
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   raylib::Window window(1000 + gui_panel_width, 1000, "stone-path-pattern");
-  window.SetTargetFPS(1000);
   GuiLoadStyle("assets/style.rgs");
   GuiSetStyle(DEFAULT, TEXT_SIZE, text_size);
+
+  // Basically unlimited so it never tops out and so I can use it to see how
+  // many times a second I can calculate and render everything to get a feel of
+  // the performance of the functions I made.
+  window.SetTargetFPS(999999);
 
   patterns = {
       {"Random triangle",
@@ -118,15 +122,14 @@ int main() {
           raylib::Color(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
       DrawDefaultGUI();
+      window.DrawFPS(gui_start_x,
+                     window.GetRenderHeight() - gui_padding - text_size);
 
       if (pattern_choice < 0) {
         continue;
       }
 
       DrawPattern();
-
-      window.DrawFPS(gui_start_x,
-                     window.GetRenderHeight() - gui_padding - text_size);
     }
   }
 
