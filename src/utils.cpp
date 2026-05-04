@@ -75,7 +75,8 @@ PatternWire dualMesh(PatternWire initial_wire) {
   return new_wire;
 }
 
-PatternWire dualMeshWithBoundary(PatternWire initial_wire) {
+PatternWire dualMeshWithBoundary(PatternWire initial_wire, float max_offset,
+                                 int max_x, int max_y) {
   PatternWire new_wire;
   for (auto [edge, centers] : initial_wire) {
     // If an edge only has 1 center, it is an outer edge, and the center is an
@@ -87,6 +88,12 @@ PatternWire dualMeshWithBoundary(PatternWire initial_wire) {
       // We use the edge's center as a vertex for the new connecting edge.
       Point edge_center = {(edge[0][0] + edge[1][0]) / 2,
                            (edge[0][1] + edge[1][1]) / 2};
+      if (edge_center[0] != max_x && edge_center[0] != 0) {
+        edge_center[0] += ((float(rand()) / RAND_MAX) - 0.5) * (max_offset * 2);
+      }
+      if (edge_center[1] != max_y && edge_center[1] != 0) {
+        edge_center[1] += ((float(rand()) / RAND_MAX) - 0.5) * (max_offset * 2);
+      }
       new_wire[{center, edge_center}].push_back(edge[0]);
       new_wire[{center, edge_center}].push_back(edge[1]);
 
@@ -222,6 +229,8 @@ PatternFill polylinesTriangulation(PatternPreFill polylines) {
   return pattern_fill;
 }
 
+// Not including this in dualMesh() so that the random positions stay the same
+// between it and dualMeshWithBoundary().
 void randomizeCenterPositions(PatternWire &wire, float max_offset) {
   // Maps the original centers to the new randomized centers.
   map<Point, Point> center_map;

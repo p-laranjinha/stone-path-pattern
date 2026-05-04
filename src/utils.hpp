@@ -15,10 +15,11 @@ Point triangleCenter(Triangle t);
 
 PatternWire dualMesh(PatternWire initial_wire);
 
-PatternWire dualMeshWithBoundary(PatternWire initial_wire);
+PatternWire dualMeshWithBoundary(PatternWire initial_wire, float max_offset,
+                                 int max_x, int max_y);
 
 PatternPreFill wireToPolylines(PatternWire wire);
 
 PatternFill polylinesTriangulation(PatternPreFill polylines);
 
-void randomizeCenterPositions(PatternWire& wire, float max_offset);
+void randomizeCenterPositions(PatternWire &wire, float max_offset);

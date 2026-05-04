@@ -148,7 +148,9 @@ void DrawPattern() {
               raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
   }
   if (!hide_pattern) {
-    PatternWire dual_with_boundary = dualMeshWithBoundary(wire);
+    PatternWire dual_with_boundary =
+        dualMeshWithBoundary(wire, float(get<0>(center_max_offset)) / 100,
+                             get<0>(max_x), get<0>(max_y));
     if (!highlight_boundary) {
       PatternPreFill polylines = wireToPolylines(dual_with_boundary);
       PatternFill fill = polylinesTriangulation(polylines);
