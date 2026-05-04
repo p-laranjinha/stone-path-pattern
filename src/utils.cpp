@@ -113,6 +113,10 @@ PatternPreFill wireToPolylines(PatternWire wire) {
     Polyline polyline;
     // Start the polyline.
     Point start_point = adjacencies.begin()->first;
+    if (adjacencies[start_point].size() == 1) {
+      // If start_point only has 1 adjacent vertex, it isn't a closed polygon.
+      continue;
+    }
     polyline.push_back(adjacencies[start_point][0]);
     polyline.push_back(start_point);
     polyline.push_back(adjacencies[start_point][1]);
@@ -169,10 +173,6 @@ PatternFill polylinesTriangulation(PatternPreFill polylines) {
     if (polyline.size() < 3) {
       continue;
     }
-    if (polyline.size() == 3) {
-      pattern_fill[center].push_back({polyline[0], polyline[1], polyline[0]});
-      continue;
-    }
 
     // https://stackoverflow.com/a/1165943
     // https://github.com/ivanfratric/polypartition/issues/49
@@ -182,7 +182,7 @@ PatternFill polylinesTriangulation(PatternPreFill polylines) {
     for (int i = 0; i < polyline.size(); i++) {
       Point prev = (i != 0) ? polyline[i - 1] : polyline.back();
       Point point = polyline[i];
-      is_clockwise_sum += (point[0] - prev[0]) * (point[1] + point[1]);
+      is_clockwise_sum += (point[0] - prev[0]) * (point[1] + prev[1]);
     }
     bool is_clockwise = is_clockwise_sum > 0;
     if (!is_clockwise) {

@@ -141,7 +141,7 @@ int main() {
     }
     PatternWire dual = dualMesh(wire);
     PatternWire dual_with_boundary = dualMeshWithBoundary(wire);
-    PatternPreFill polylines = wireToPolylines(dual_with_boundary);
+    PatternPreFill polylines = wireToPolylines(dual);
     PatternFill fill = polylinesTriangulation(polylines);
 
     while (window.Drawing()) {
@@ -151,6 +151,7 @@ int main() {
       DrawDefaultGUI();
       get<2>(patterns[pattern_choice])();
 
+      srand(seed);
       DrawFill(fill, max_x, max_y, pattern_width, pattern_height, padding,
                padding, raylib::Color::DarkBlue());
 
