@@ -7,7 +7,8 @@ void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
                raylib::Color color);
 
 void DrawFill(PatternFill fill, int max_edge_x, int max_edge_y, int width,
-              int height, int start_x, int start_y, raylib::Color color);
+              int height, int start_x, int start_y, raylib::Color color,
+              raylib::Color hover_color);
 
 void DrawIntInput(IntInputValue &v, Rectangle bounds, int min, int max);
 

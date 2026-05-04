@@ -145,7 +145,8 @@ void DrawPattern() {
     PatternPreFill polylines = wireToPolylines(wire);
     PatternFill fill = polylinesTriangulation(polylines);
     DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width, pattern_height,
-             padding, padding, raylib::Color::DarkBlue());
+             padding, padding, raylib::Color::DarkBlue(),
+             raylib::Color::Orange());
     DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
               pattern_width, pattern_height, padding, padding,
               raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
@@ -158,7 +159,8 @@ void DrawPattern() {
       PatternPreFill polylines = wireToPolylines(dual_with_boundary);
       PatternFill fill = polylinesTriangulation(polylines);
       DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width,
-               pattern_height, padding, padding, raylib::Color::DarkBlue());
+               pattern_height, padding, padding, raylib::Color::DarkBlue(),
+               raylib::Color::Orange());
       if (show_original_pattern) {
         DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
                   pattern_width, pattern_height, padding, padding,
@@ -173,7 +175,8 @@ void DrawPattern() {
       PatternPreFill polylines = wireToPolylines(dual);
       PatternFill fill = polylinesTriangulation(polylines);
       DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width,
-               pattern_height, padding, padding, raylib::Color::DarkBlue());
+               pattern_height, padding, padding, raylib::Color::DarkBlue(),
+               raylib::Color::Orange());
       if (show_original_pattern) {
         DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
                   pattern_width, pattern_height, padding, padding,

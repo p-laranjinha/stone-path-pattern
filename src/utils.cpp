@@ -20,17 +20,32 @@ void DrawEdges(PatternWire edges, int max_edge_x, int max_edge_y, int thickness,
 }
 
 void DrawFill(PatternFill fill, int max_edge_x, int max_edge_y, int width,
-              int height, int start_x, int start_y, raylib::Color color) {
+              int height, int start_x, int start_y, raylib::Color color,
+              raylib::Color hover_color) {
   for (auto [center, triangles] : fill) {
-    for (Triangle triangle : triangles) {
-      float fade = 0.2 + float(rand()) / RAND_MAX * 0.8;
-      DrawTriangle({triangle[0][0] * width / max_edge_x + start_x,
-                    triangle[0][1] * height / max_edge_y + start_y},
-                   {triangle[1][0] * width / max_edge_x + start_x,
-                    triangle[1][1] * height / max_edge_y + start_y},
-                   {triangle[2][0] * width / max_edge_x + start_x,
-                    triangle[2][1] * height / max_edge_y + start_y},
-                   color.Fade(fade));
+    float fade = 0.2 + float(rand()) / RAND_MAX * 0.8;
+    raylib::Color chosen_color = color.Fade(fade);
+    vector<array<Vector2, 3>> translated_triangles;
+    for (int i = 0; i < triangles.size(); i++) {
+      array<Vector2, 3> translated_triangle;
+      translated_triangle[0] = {
+          triangles[i][0][0] * width / max_edge_x + start_x,
+          triangles[i][0][1] * height / max_edge_y + start_y};
+      translated_triangle[1] = {
+          triangles[i][1][0] * width / max_edge_x + start_x,
+          triangles[i][1][1] * height / max_edge_y + start_y};
+      translated_triangle[2] = {
+          triangles[i][2][0] * width / max_edge_x + start_x,
+          triangles[i][2][1] * height / max_edge_y + start_y};
+      translated_triangles.push_back(translated_triangle);
+      if (CheckCollisionPointTriangle(
+              {float(GetMouseX()), float(GetMouseY())}, translated_triangle[0],
+              translated_triangle[1], translated_triangle[2])) {
+        chosen_color = hover_color;
+      }
+    }
+    for (auto triangle : translated_triangles) {
+      DrawTriangle(triangle[0], triangle[1], triangle[2], chosen_color);
     }
   }
 };
