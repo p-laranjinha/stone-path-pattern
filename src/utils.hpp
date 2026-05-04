@@ -20,3 +20,5 @@ PatternWire dualMeshWithBoundary(PatternWire initial_wire);
 PatternPreFill wireToPolylines(PatternWire wire);
 
 PatternFill polylinesTriangulation(PatternPreFill polylines);
+
+void randomizeCenterPositions(PatternWire& wire, float max_offset);

@@ -143,6 +143,7 @@ int main() {
 void DrawPattern() {
   get<2>(patterns[pattern_choice])();
   PatternWire wire = get<1>(patterns[pattern_choice])();
+  randomizeCenterPositions(wire, 0.3);
 
   if (show_original_pattern && hide_pattern) {
     PatternPreFill polylines = wireToPolylines(wire);

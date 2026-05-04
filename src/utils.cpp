@@ -221,3 +221,27 @@ PatternFill polylinesTriangulation(PatternPreFill polylines) {
   }
   return pattern_fill;
 }
+
+void randomizeCenterPositions(PatternWire &wire, float max_offset) {
+  // Maps the original centers to the new randomized centers.
+  map<Point, Point> center_map;
+  for (auto [edge, old_centers] : wire) {
+    for (int i = 0; i < old_centers.size(); i++) {
+      Point old_center = old_centers[i];
+      // If center_map doesn't contain the old center.
+      if (center_map.count(old_center) == 0) {
+        // `float(rand()) / RAND_MAX` returns a value between 0 and 1.
+        // Subtract 0.5 to return a value between -0.5 and 0.5.
+        // Multiply by `max_offset * 2` to return a value between -max_offset
+        //  and max_offset.
+        float x_offset = ((float(rand()) / RAND_MAX) - 0.5) * (max_offset * 2);
+        float y_offset = ((float(rand()) / RAND_MAX) - 0.5) * (max_offset * 2);
+        Point new_center = {old_center[0] + x_offset, old_center[1] + y_offset};
+        center_map[old_center] = new_center;
+        wire[edge][i] = new_center;
+      } else {
+        wire[edge][i] = center_map[old_center];
+      }
+    }
+  }
+}
