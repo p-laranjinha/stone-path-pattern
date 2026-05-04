@@ -17,12 +17,15 @@ using namespace Types;
 int padding = 5;
 int gui_panel_width = 400;
 float gui_padding = 20;
+float gui_spacing = 4;
 float gui_input_width = gui_panel_width - gui_padding * 2;
 float text_size = 18;
 
 IntInputValue thickness = {3, 3, false};
 IntInputValue max_x = {15, 15, false};
 IntInputValue max_y = {10, 10, false};
+IntInputValue seed = {1, 1, false};
+IntInputValue center_max_offset = {10, 10, false};
 
 int pattern_choice = 0;
 int pattern_scroll_index = 0;
@@ -37,7 +40,6 @@ int pattern_width;
 int pattern_height;
 
 // Specific pattern options.
-IntInputValue seed = {1, 1, false};
 IntInputValue diagonal_chance = {50, 50, false};
 IntInputValue right_diagonal_chance = {25, 25, false};
 
@@ -60,20 +62,20 @@ int main() {
        },
        [&]() -> void {
          GuiLabel({gui_start_x, gui_padding + text_size * 21,
-                   gui_input_width / 2 - 4, text_size},
+                   gui_input_width / 2 - gui_spacing / 2, text_size},
                   "Diag. chance:");
          DrawIntInput(diagonal_chance,
                       {gui_start_x, gui_padding + text_size * 22,
-                       gui_input_width / 2 - 4, text_size},
+                       gui_input_width / 2 - gui_spacing / 2, text_size},
                       0, 100);
-         GuiLabel({gui_start_x + gui_input_width / 2 + 4,
-                   gui_padding + text_size * 21, gui_input_width / 2 - 4,
-                   text_size},
+         GuiLabel({gui_start_x + gui_input_width / 2 + gui_spacing / 2,
+                   gui_padding + text_size * 21,
+                   gui_input_width / 2 - gui_spacing / 2, text_size},
                   "Right d. chance:");
          DrawIntInput(right_diagonal_chance,
-                      {gui_start_x + gui_input_width / 2 + 4,
-                       gui_padding + text_size * 22, gui_input_width / 2 - 4,
-                       text_size},
+                      {gui_start_x + gui_input_width / 2 + gui_spacing / 2,
+                       gui_padding + text_size * 22,
+                       gui_input_width / 2 - gui_spacing / 2, text_size},
                       0, 100);
        }},
       {"Alternating triangle 2",
@@ -134,7 +136,7 @@ int main() {
 void DrawPattern() {
   get<2>(patterns[pattern_choice])();
   PatternWire wire = get<1>(patterns[pattern_choice])();
-  randomizeCenterPositions(wire, 0.1);
+  randomizeCenterPositions(wire, float(get<0>(center_max_offset)) / 100);
 
   if (show_original_pattern && hide_pattern) {
     PatternPreFill polylines = wireToPolylines(wire);
@@ -199,37 +201,48 @@ void DrawDefaultGUI() {
   GuiCheckBox({gui_start_x, gui_padding + text_size * 4, text_size, text_size},
               "Highlight boundary", &highlight_boundary);
 
-  GuiLabel({gui_start_x, gui_padding + text_size * 6, gui_input_width / 2 - 4,
-            text_size},
+  GuiLabel({gui_start_x, gui_padding + text_size * 6,
+            gui_input_width / 4 - gui_spacing / 2, text_size},
            "Max X:");
   DrawIntInput(max_x,
                {gui_start_x, gui_padding + text_size * 7,
-                gui_input_width / 2 - 4, text_size},
+                gui_input_width / 4 - gui_spacing / 2, text_size},
                0, 1000);
-  GuiLabel({gui_start_x + gui_input_width / 2 + 4, gui_padding + text_size * 6,
-            gui_input_width / 2 - 4, text_size},
+  GuiLabel({gui_start_x + gui_input_width / 4 + gui_spacing / 2,
+            gui_padding + text_size * 6, gui_input_width / 4 - gui_spacing,
+            text_size},
            "Max Y:");
   DrawIntInput(max_y,
-               {gui_start_x + gui_input_width / 2 + 4,
-                gui_padding + text_size * 7, gui_input_width / 2 - 4,
+               {gui_start_x + gui_input_width / 4 + gui_spacing / 2,
+                gui_padding + text_size * 7, gui_input_width / 4 - gui_spacing,
                 text_size},
                0, 1000);
-
-  GuiLabel({gui_start_x, gui_padding + text_size * 9, gui_input_width / 2 - 4,
+  GuiLabel({gui_start_x + gui_input_width / 2 + gui_spacing / 2,
+            gui_padding + text_size * 6, gui_input_width / 2 - gui_spacing / 2,
             text_size},
            "Line thickness:");
   DrawIntInput(thickness,
-               {gui_start_x, gui_padding + text_size * 10,
-                gui_input_width / 2 - 4, text_size},
+               {gui_start_x + gui_input_width / 2 + gui_spacing / 2,
+                gui_padding + text_size * 7,
+                gui_input_width / 2 - gui_spacing / 2, text_size},
                0, 100);
-  GuiLabel({gui_start_x + gui_input_width / 2 + 4, gui_padding + text_size * 9,
-            gui_input_width / 2 - 4, text_size},
+
+  GuiLabel({gui_start_x, gui_padding + text_size * 9,
+            gui_input_width / 2 - gui_spacing / 2, text_size},
            "Seed:");
   DrawIntInput(seed,
-               {gui_start_x + gui_input_width / 2 + 4,
-                gui_padding + text_size * 10, gui_input_width / 2 - 4,
-                text_size},
+               {gui_start_x, gui_padding + text_size * 10,
+                gui_input_width / 2 - gui_spacing / 2, text_size},
                1, 99999);
+  GuiLabel({gui_start_x + gui_input_width / 2 + gui_spacing / 2,
+            gui_padding + text_size * 9, gui_input_width / 2 - gui_spacing / 2,
+            text_size},
+           "Center offset * 100:");
+  DrawIntInput(center_max_offset,
+               {gui_start_x + gui_input_width / 2 + gui_spacing / 2,
+                gui_padding + text_size * 10,
+                gui_input_width / 2 - gui_spacing / 2, text_size},
+               0, 100);
 
   GuiLabel(
       {gui_start_x, gui_padding + text_size * 12, gui_input_width, text_size},
