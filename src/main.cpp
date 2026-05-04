@@ -22,7 +22,7 @@ float gui_spacing = 4;
 float gui_input_width = gui_panel_width - gui_padding * 2;
 float text_size = 18;
 
-IntInputValue thickness = {3, 3, false};
+IntInputValue thickness = {1, 1, false};
 IntInputValue max_x = {15, 15, false};
 IntInputValue max_y = {15, 15, false};
 IntInputValue seed = {1, 1, false};
