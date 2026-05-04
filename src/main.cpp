@@ -20,17 +20,9 @@ float gui_padding = 20;
 float gui_input_width = gui_panel_width - gui_padding * 2;
 float text_size = 18;
 
-int thickness = 3;
-int tmp_thickness = thickness;
-bool thickness_edit = false;
-
-int max_x = 15;
-int tmp_max_x = max_x;
-bool max_x_edit = false;
-
-int max_y = 10;
-int tmp_max_y = max_y;
-bool max_y_edit = false;
+IntInputValue thickness = {3, 3, false};
+IntInputValue max_x = {15, 15, false};
+IntInputValue max_y = {10, 10, false};
 
 int pattern_choice = 0;
 int pattern_scroll_index = 0;
@@ -40,18 +32,16 @@ bool highlight_boundary = false;
 
 float gui_start_x;
 string pattern_choices;
+vector<tuple<string, function<PatternWire()>, function<void()>>> patterns;
+int pattern_width;
+int pattern_height;
 
 // Specific pattern options.
-int seed = 0;
-int tmp_seed = seed;
-bool seed_edit = false;
-float diagonal_chance = 0.5;
-int tmp_diagonal_chance = diagonal_chance * 100;
-bool diagonal_chance_edit = false;
-float right_diagonal_chance = 0.25;
-int tmp_right_diagonal_chance = right_diagonal_chance * 100;
-bool right_diagonal_chance_edit = false;
+IntInputValue seed = {0, 0, false};
+IntInputValue diagonal_chance = {50, 50, false};
+IntInputValue right_diagonal_chance = {25, 25, false};
 
+static void DrawPattern(void);
 static void DrawDefaultGUI(void);
 
 int main() {
@@ -61,66 +51,59 @@ int main() {
   GuiLoadStyle("assets/style.rgs");
   GuiSetStyle(DEFAULT, TEXT_SIZE, text_size);
 
-  vector<tuple<string, function<PatternWire()>, function<void()>>> patterns = {
+  patterns = {
       {"Random triangle",
        [&]() -> PatternWire {
-         return randTrianglePattern(max_x, max_y, seed, diagonal_chance,
-                                    right_diagonal_chance);
+         return randTrianglePattern(get<0>(max_x), get<0>(max_y), get<0>(seed),
+                                    float(get<0>(diagonal_chance)) / 100,
+                                    float(get<0>(right_diagonal_chance)) / 100);
        },
        [&]() -> void {
          GuiLabel({gui_start_x, gui_padding + text_size * 23,
                    gui_input_width / 3, text_size},
                   "Seed:");
-         if (GuiValueBox({gui_start_x, gui_padding + text_size * 24,
-                          gui_input_width / 3, text_size},
-                         "", &tmp_seed, 0, 99999, seed_edit)) {
-           seed_edit = !seed_edit;
-           if (!seed_edit) {
-             seed = tmp_seed;
-           }
-         }
+         DrawIntInput(seed,
+                      {gui_start_x, gui_padding + text_size * 24,
+                       gui_input_width / 3, text_size},
+                      0, 99999);
          GuiLabel({gui_start_x + gui_input_width / 3,
                    gui_padding + text_size * 23, gui_input_width / 3,
                    text_size},
                   "Diag. chance:");
-         if (GuiValueBox(
-                 {gui_start_x + gui_input_width / 3,
-                  gui_padding + text_size * 24, gui_input_width / 3, text_size},
-                 "", &tmp_diagonal_chance, 0, 100, diagonal_chance_edit)) {
-           diagonal_chance_edit = !diagonal_chance_edit;
-           if (!diagonal_chance_edit) {
-             diagonal_chance = float(tmp_diagonal_chance) / 100;
-           }
-         }
+         DrawIntInput(diagonal_chance,
+                      {gui_start_x + gui_input_width / 3,
+                       gui_padding + text_size * 24, gui_input_width / 3,
+                       text_size},
+                      0, 100);
          GuiLabel({gui_start_x + gui_input_width * 2 / 3,
                    gui_padding + text_size * 23, gui_input_width / 3,
                    text_size},
                   "Right d. chance:");
-         if (GuiValueBox({gui_start_x + gui_input_width * 2 / 3,
-                          gui_padding + text_size * 24, gui_input_width / 3,
-                          text_size},
-                         "", &tmp_right_diagonal_chance, 0, 100,
-                         right_diagonal_chance_edit)) {
-           right_diagonal_chance_edit = !right_diagonal_chance_edit;
-           if (!right_diagonal_chance_edit) {
-             right_diagonal_chance = float(tmp_right_diagonal_chance) / 100;
-           }
-         }
+         DrawIntInput(right_diagonal_chance,
+                      {gui_start_x + gui_input_width * 2 / 3,
+                       gui_padding + text_size * 24, gui_input_width / 3,
+                       text_size},
+                      0, 100);
        }},
       {"Alternating triangle 2",
        [&]() -> PatternWire {
-         return alternatingTriangleGridPattern2(max_x, max_y);
+         return alternatingTriangleGridPattern2(get<0>(max_x), get<0>(max_y));
        },
        [&]() -> void {}},
       {"Alternating triangle",
        [&]() -> PatternWire {
-         return alternatingTriangleGridPattern(max_x, max_y);
+         return alternatingTriangleGridPattern(get<0>(max_x), get<0>(max_y));
        },
        [&]() -> void {}},
       {"Triangle",
-       [&]() -> PatternWire { return triangleGridPattern(max_x, max_y); },
+       [&]() -> PatternWire {
+         return triangleGridPattern(get<0>(max_x), get<0>(max_y));
+       },
        [&]() -> void {}},
-      {"Grid", [&]() -> PatternWire { return gridPattern(max_x, max_y); },
+      {"Grid",
+       [&]() -> PatternWire {
+         return gridPattern(get<0>(max_x), get<0>(max_y));
+       },
        [&]() -> void {}},
   };
   for (int i = 0; i < patterns.size(); i++) {
@@ -131,8 +114,8 @@ int main() {
   }
 
   while (!window.ShouldClose()) { // Detect window close button or ESC key
-    int pattern_width = window.GetRenderWidth() - padding * 2 - gui_panel_width;
-    int pattern_height = window.GetRenderHeight() - padding * 2;
+    pattern_width = window.GetRenderWidth() - padding * 2 - gui_panel_width;
+    pattern_height = window.GetRenderHeight() - padding * 2;
     gui_start_x = window.GetRenderWidth() - gui_panel_width + gui_padding;
 
     while (window.Drawing()) {
@@ -145,57 +128,7 @@ int main() {
         continue;
       }
 
-      get<2>(patterns[pattern_choice])();
-
-      PatternWire wire = get<1>(patterns[pattern_choice])();
-
-      srand(seed);
-
-      if (show_original_pattern && hide_pattern) {
-        PatternPreFill polylines = wireToPolylines(wire);
-        PatternFill fill = polylinesTriangulation(polylines);
-        DrawFill(fill, max_x, max_y, pattern_width, pattern_height, padding,
-                 padding, raylib::Color::DarkBlue());
-        DrawEdges(wire, max_x, max_y, thickness, pattern_width, pattern_height,
-                  padding, padding,
-                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
-      }
-      if (!hide_pattern) {
-        PatternWire dual_with_boundary = dualMeshWithBoundary(wire);
-        if (!highlight_boundary) {
-          PatternPreFill polylines = wireToPolylines(dual_with_boundary);
-          PatternFill fill = polylinesTriangulation(polylines);
-          DrawFill(fill, max_x, max_y, pattern_width, pattern_height, padding,
-                   padding, raylib::Color::DarkBlue());
-          if (show_original_pattern) {
-            DrawEdges(
-                wire, max_x, max_y, thickness, pattern_width, pattern_height,
-                padding, padding,
-                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
-          }
-          DrawEdges(dual_with_boundary, max_x, max_y, thickness, pattern_width,
-                    pattern_height, padding, padding,
-                    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
-        } else {
-          PatternWire dual = dualMesh(wire);
-          PatternPreFill polylines = wireToPolylines(dual);
-          PatternFill fill = polylinesTriangulation(polylines);
-          DrawFill(fill, max_x, max_y, pattern_width, pattern_height, padding,
-                   padding, raylib::Color::DarkBlue());
-          if (show_original_pattern) {
-            DrawEdges(
-                wire, max_x, max_y, thickness, pattern_width, pattern_height,
-                padding, padding,
-                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
-          }
-          DrawEdges(dual_with_boundary, max_x, max_y, thickness, pattern_width,
-                    pattern_height, padding, padding,
-                    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
-          DrawEdges(dual, max_x, max_y, thickness, pattern_width,
-                    pattern_height, padding, padding,
-                    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL)));
-        }
-      }
+      DrawPattern();
 
       window.DrawFPS(gui_start_x,
                      window.GetRenderHeight() - gui_padding - text_size);
@@ -203,6 +136,59 @@ int main() {
   }
 
   return 0;
+}
+
+void DrawPattern() {
+  get<2>(patterns[pattern_choice])();
+  PatternWire wire = get<1>(patterns[pattern_choice])();
+
+  srand(get<0>(seed));
+
+  if (show_original_pattern && hide_pattern) {
+    PatternPreFill polylines = wireToPolylines(wire);
+    PatternFill fill = polylinesTriangulation(polylines);
+    DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width, pattern_height,
+             padding, padding, raylib::Color::DarkBlue());
+    DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
+              pattern_width, pattern_height, padding, padding,
+              raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
+  }
+  if (!hide_pattern) {
+    PatternWire dual_with_boundary = dualMeshWithBoundary(wire);
+    if (!highlight_boundary) {
+      PatternPreFill polylines = wireToPolylines(dual_with_boundary);
+      PatternFill fill = polylinesTriangulation(polylines);
+      DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width,
+               pattern_height, padding, padding, raylib::Color::DarkBlue());
+      if (show_original_pattern) {
+        DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
+                  pattern_width, pattern_height, padding, padding,
+                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+      }
+      DrawEdges(dual_with_boundary, get<0>(max_x), get<0>(max_y),
+                get<0>(thickness), pattern_width, pattern_height, padding,
+                padding,
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
+    } else {
+      PatternWire dual = dualMesh(wire);
+      PatternPreFill polylines = wireToPolylines(dual);
+      PatternFill fill = polylinesTriangulation(polylines);
+      DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width,
+               pattern_height, padding, padding, raylib::Color::DarkBlue());
+      if (show_original_pattern) {
+        DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
+                  pattern_width, pattern_height, padding, padding,
+                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+      }
+      DrawEdges(dual_with_boundary, get<0>(max_x), get<0>(max_y),
+                get<0>(thickness), pattern_width, pattern_height, padding,
+                padding,
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
+      DrawEdges(dual, get<0>(max_x), get<0>(max_y), get<0>(thickness),
+                pattern_width, pattern_height, padding, padding,
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL)));
+    }
+  }
 }
 
 void DrawDefaultGUI() {
@@ -226,40 +212,24 @@ void DrawDefaultGUI() {
   GuiLabel({gui_start_x, gui_padding + text_size * 9, gui_input_width / 4,
             text_size},
            "Max X:");
-  if (GuiValueBox({gui_start_x, gui_padding + text_size * 10,
-                   gui_input_width / 4, text_size},
-                  "", &tmp_max_x, 1, 1000, max_x_edit)) {
-    max_x_edit = !max_x_edit;
-    if (!max_x_edit) {
-      max_x = tmp_max_x;
-    }
-  }
-
+  DrawIntInput(max_x,
+               {gui_start_x, gui_padding + text_size * 10, gui_input_width / 4,
+                text_size},
+               0, 1000);
   GuiLabel({gui_start_x + gui_input_width / 4, gui_padding + text_size * 9,
             gui_input_width / 4, text_size},
            "Max Y:");
-  if (GuiValueBox({gui_start_x + gui_input_width / 4,
-                   gui_padding + text_size * 10, gui_input_width / 4,
-                   text_size},
-                  "", &tmp_max_y, 1, 1000, max_y_edit)) {
-    max_y_edit = !max_y_edit;
-    if (!max_y_edit) {
-      max_y = tmp_max_y;
-    }
-  }
-
+  DrawIntInput(max_y,
+               {gui_start_x + gui_input_width / 4, gui_padding + text_size * 10,
+                gui_input_width / 4, text_size},
+               0, 1000);
   GuiLabel({gui_start_x + gui_input_width / 2, gui_padding + text_size * 9,
             gui_input_width / 2, text_size},
            "Line thickness:");
-  if (GuiValueBox({gui_start_x + gui_input_width / 2,
-                   gui_padding + text_size * 10, gui_input_width / 2,
-                   text_size},
-                  "", &tmp_thickness, 1, 100, thickness_edit)) {
-    thickness_edit = !thickness_edit;
-    if (!thickness_edit) {
-      thickness = tmp_thickness;
-    }
-  }
+  DrawIntInput(thickness,
+               {gui_start_x + gui_input_width / 2, gui_padding + text_size * 10,
+                gui_input_width / 2, text_size},
+               0, 100);
 
   GuiLabel(
       {gui_start_x, gui_padding + text_size * 13, gui_input_width, text_size},

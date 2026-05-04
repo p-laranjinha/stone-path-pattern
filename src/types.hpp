@@ -47,4 +47,9 @@ using PatternFill = map<Point, vector<Triangle>>;
 //  new fill.
 using Pattern = tuple<PatternWire, PatternFill>;
 
+// Hint: tuple<REAL_VALUE, TMP_VALUE, EDIT>
+// The GuiValueBox() provided by raygui requires a place to store the current
+// value before pressing <Enter> and a place to store if it's being edited.
+using IntInputValue = tuple<int, int, bool>;
+
 } // namespace Types

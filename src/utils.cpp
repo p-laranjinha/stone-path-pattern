@@ -35,6 +35,15 @@ void DrawFill(PatternFill fill, int max_edge_x, int max_edge_y, int width,
   }
 };
 
+void DrawIntInput(IntInputValue &v, Rectangle bounds, int min, int max) {
+  if (GuiValueBox(bounds, "", &get<1>(v), min, max, get<2>(v))) {
+    get<2>(v) = !get<2>(v);
+    if (!get<2>(v)) {
+      get<0>(v) = get<1>(v);
+    }
+  }
+}
+
 Point triangleCenter(Triangle t) {
   return {(t[0][0] + t[1][0] + t[2][0]) / 3, (t[0][1] + t[1][1] + t[2][1]) / 3};
 }
