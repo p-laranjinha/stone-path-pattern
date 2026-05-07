@@ -151,7 +151,7 @@ void DrawPattern() {
              padding, padding, base_color, hover_color);
     DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
               pattern_width, pattern_height, padding, padding,
-              raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
+              raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
   }
   if (!hide_pattern) {
     PatternWire dual_with_boundary =
@@ -165,12 +165,12 @@ void DrawPattern() {
       if (show_original_pattern) {
         DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
                   pattern_width, pattern_height, padding, padding,
-                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
       }
       DrawEdges(dual_with_boundary, get<0>(max_x), get<0>(max_y),
                 get<0>(thickness), pattern_width, pattern_height, padding,
                 padding,
-                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
     } else {
       PatternWire dual = dualMesh(wire);
       PatternPreFill polylines = wireToPolylines(dual);
@@ -180,15 +180,15 @@ void DrawPattern() {
       if (show_original_pattern) {
         DrawEdges(wire, get<0>(max_x), get<0>(max_y), get<0>(thickness),
                   pattern_width, pattern_height, padding, padding,
-                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
       }
       DrawEdges(dual_with_boundary, get<0>(max_x), get<0>(max_y),
                 get<0>(thickness), pattern_width, pattern_height, padding,
                 padding,
-                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_FOCUSED)));
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL)));
       DrawEdges(dual, get<0>(max_x), get<0>(max_y), get<0>(thickness),
                 pattern_width, pattern_height, padding, padding,
-                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL)));
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
     }
   }
 }
