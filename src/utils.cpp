@@ -46,6 +46,7 @@ void DrawFill(PatternFill fill, int max_edge_x, int max_edge_y, int width,
     }
     for (auto triangle : translated_triangles) {
       DrawTriangle(triangle[0], triangle[1], triangle[2], chosen_color);
+      // DrawTriangleLines(triangle[0], triangle[1], triangle[2], RED);
     }
   }
 };
@@ -187,7 +188,7 @@ bool isInside(Point prev, Point point, Point next, Point new_point) {
 
 bool isEar(Point prev, Point point, Point next, vector<Point> polyline) {
   if (isConvex(prev, point, next)) {
-    for (int i = 0; i < polyline.size() - 2; i++) {
+    for (int i = 0; i < polyline.size(); i++) {
       if (polyline[i] != prev && polyline[i] != point && polyline[i] != next) {
         if (isInside(prev, point, next, polyline[i])) {
           return false;
