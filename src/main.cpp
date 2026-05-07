@@ -145,7 +145,7 @@ void DrawPattern() {
   randomizeCenterPositions(wire, float(get<0>(center_max_offset)) / 100);
 
   if (show_original_pattern && hide_pattern) {
-    PatternPreFill polylines = wireToPolylines(wire);
+    PatternPolylines polylines = wireToPolylines(wire);
     PatternFill fill = polylinesTriangulation(polylines);
     DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width, pattern_height,
              padding, padding, base_color, hover_color);
@@ -158,7 +158,7 @@ void DrawPattern() {
         dualMeshWithBoundary(wire, float(get<0>(center_max_offset)) / 100,
                              get<0>(max_x), get<0>(max_y));
     if (!highlight_boundary) {
-      PatternPreFill polylines = wireToPolylines(dual_with_boundary);
+      PatternPolylines polylines = wireToPolylines(dual_with_boundary);
       PatternFill fill = polylinesTriangulation(polylines);
       DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width,
                pattern_height, padding, padding, base_color, hover_color);
@@ -173,7 +173,7 @@ void DrawPattern() {
                 raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
     } else {
       PatternWire dual = dualMesh(wire);
-      PatternPreFill polylines = wireToPolylines(dual);
+      PatternPolylines polylines = wireToPolylines(dual);
       PatternFill fill = polylinesTriangulation(polylines);
       DrawFill(fill, get<0>(max_x), get<0>(max_y), pattern_width,
                pattern_height, padding, padding, base_color, hover_color);

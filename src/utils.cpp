@@ -128,15 +128,15 @@ PatternWire dualMeshWithBoundary(PatternWire initial_wire, float max_offset,
 // This should be included in the pattern generation and/or in the dual mesh
 // process for efficiency but I'll make it separate and maybe include it in the
 // other places later.
-PatternPreFill wireToPolylines(PatternWire wire) {
-  PatternPrePreFill adjacentVertices;
+PatternPolylines wireToPolylines(PatternWire wire) {
+  PatternAdjacentVertices adjacentVertices;
   for (auto [edge, centers] : wire) {
     for (Point center : centers) {
       adjacentVertices[center][edge[0]].push_back(edge[1]);
       adjacentVertices[center][edge[1]].push_back(edge[0]);
     }
   }
-  PatternPreFill polylines;
+  PatternPolylines polylines;
   for (auto [center, adjacencies] : adjacentVertices) {
     if (adjacencies.size() < 3) {
       continue;
@@ -203,7 +203,7 @@ bool isEar(Point prev, Point point, Point next, vector<Point> polyline) {
 //  it is "easy" to implement and returns decent looking triangulations.
 // I'm adapting:
 //  https://github.com/ivanfratric/polypartition/blob/b000a4a2a72b46e1305fb6e95b080448d7c12049/src/polypartition.cpp#L429-L519
-PatternFill polylinesTriangulation(PatternPreFill polylines) {
+PatternFill polylinesTriangulation(PatternPolylines polylines) {
   PatternFill pattern_fill;
   for (auto [center, polyline] : polylines) {
     if (polyline.size() < 3) {

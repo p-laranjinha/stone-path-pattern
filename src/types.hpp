@@ -26,12 +26,12 @@ using PatternWire = map<Edge, vector<Point>>;
 //  polygon and their adjacent vertices.
 // This should only require being used during the dual mesh process.
 // I'm using vector instead of array<2> just so I can use push_back().
-using PatternPrePreFill = map<Point, map<Point, vector<Point>>>;
+using PatternAdjacentVertices = map<Point, map<Point, vector<Point>>>;
 
 // Hint: map<CENTER, Polyline>.
 // This is a mid-process data structure used to save a polygon's full wire.
 // This will be used to triangulate the polygon.
-using PatternPreFill = map<Point, Polyline>;
+using PatternPolylines = map<Point, Polyline>;
 
 // Hint: map<CENTER, vector<Triangle>>.
 // This data structure contains a polygon's triangle partitions formed after
