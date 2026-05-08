@@ -48,7 +48,7 @@ using PatternFill = map<Point, vector<Triangle>>;
 // Then for each new center, save its vertices and their adjacent vertices, turn
 //  those into a polygon's wire, then triangulate the polygon to generate the
 //  new fill.
-using Pattern = tuple<PatternWire, PatternFill>;
+// using Pattern = tuple<PatternWire, PatternFill>;
 
 // Hint: tuple<REAL_VALUE, TMP_VALUE, EDIT>
 // The GuiValueBox() provided by raygui requires a place to store the current
