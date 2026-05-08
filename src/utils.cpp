@@ -61,7 +61,7 @@ void DrawCorners(PatternPolylines polylines, int max_edge_x, int max_edge_y,
       Point curr = polyline[i];
 
       Point prev = (i != 0) ? polyline[i - 1] : polyline.back();
-      Point prev_point = {
+      Point prev_start = {
           (curr[0] > prev[0]) ? curr[0] - (curr[0] - prev[0]) * start_percent
                               : curr[0] + (prev[0] - curr[0]) * start_percent,
           (curr[1] > prev[1]) ? curr[1] - (curr[1] - prev[1]) * start_percent
@@ -74,7 +74,7 @@ void DrawCorners(PatternPolylines polylines, int max_edge_x, int max_edge_y,
               : curr[1] + (prev[1] - curr[1]) * control_percent};
 
       Point next = (i != polyline.size() - 1) ? polyline[i + 1] : polyline[0];
-      Point next_point = {
+      Point next_start = {
           (curr[0] > next[0]) ? curr[0] - (curr[0] - next[0]) * start_percent
                               : curr[0] + (next[0] - curr[0]) * start_percent,
           (curr[1] > next[1]) ? curr[1] - (curr[1] - next[1]) * start_percent
@@ -87,14 +87,14 @@ void DrawCorners(PatternPolylines polylines, int max_edge_x, int max_edge_y,
               : curr[1] + (next[1] - curr[1]) * control_percent};
 
       DrawSplineSegmentBezierCubic(
-          {prev_point[0] * width / max_edge_x + start_x,
-           prev_point[1] * height / max_edge_y + start_y},
+          {prev_start[0] * width / max_edge_x + start_x,
+           prev_start[1] * height / max_edge_y + start_y},
           {prev_control[0] * width / max_edge_x + start_x,
            prev_control[1] * height / max_edge_y + start_y},
           {next_control[0] * width / max_edge_x + start_x,
            next_control[1] * height / max_edge_y + start_y},
-          {next_point[0] * width / max_edge_x + start_x,
-           next_point[1] * height / max_edge_y + start_y},
+          {next_start[0] * width / max_edge_x + start_x,
+           next_start[1] * height / max_edge_y + start_y},
           thickness, color);
     }
   }

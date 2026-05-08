@@ -214,12 +214,14 @@ void DrawPattern() {
     DrawEdges(wire, state.max_x.value, state.max_y.value, state.thickness.value,
               pattern_width, pattern_height, padding, padding,
               raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
-    DrawCorners(polylines, state.max_x.value, state.max_y.value,
-                state.thickness.value, pattern_width, pattern_height, padding,
-                padding,
-                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
-                float(state.corner_start_percent.value) / 100,
-                float(state.corner_control_percent.value) / 100);
+    if (state.corner_start_percent.value != 0) {
+      DrawCorners(polylines, state.max_x.value, state.max_y.value,
+                  state.thickness.value, pattern_width, pattern_height, padding,
+                  padding,
+                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
+                  float(state.corner_start_percent.value) / 100,
+                  float(state.corner_control_percent.value) / 100);
+    }
   }
   if (!state.hide_pattern) {
     if (!state.highlight_boundary) {
@@ -236,12 +238,14 @@ void DrawPattern() {
                 state.thickness.value, pattern_width, pattern_height, padding,
                 padding,
                 raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
-      DrawCorners(polylines, state.max_x.value, state.max_y.value,
-                  state.thickness.value, pattern_width, pattern_height, padding,
-                  padding,
-                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
-                  float(state.corner_start_percent.value) / 100,
-                  float(state.corner_control_percent.value) / 100);
+      if (state.corner_start_percent.value != 0) {
+        DrawCorners(polylines, state.max_x.value, state.max_y.value,
+                    state.thickness.value, pattern_width, pattern_height,
+                    padding, padding,
+                    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
+                    float(state.corner_start_percent.value) / 100,
+                    float(state.corner_control_percent.value) / 100);
+      }
     } else {
       DrawFill(pattern_fill, state.max_x.value, state.max_y.value,
                pattern_width, pattern_height, padding, padding,
@@ -260,12 +264,14 @@ void DrawPattern() {
                 state.thickness.value, pattern_width, pattern_height, padding,
                 padding,
                 raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
-      DrawCorners(polylines, state.max_x.value, state.max_y.value,
-                  state.thickness.value, pattern_width, pattern_height, padding,
-                  padding,
-                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
-                  float(state.corner_start_percent.value) / 100,
-                  float(state.corner_control_percent.value) / 100);
+      if (state.corner_start_percent.value != 0) {
+        DrawCorners(polylines, state.max_x.value, state.max_y.value,
+                    state.thickness.value, pattern_width, pattern_height,
+                    padding, padding,
+                    raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
+                    float(state.corner_start_percent.value) / 100,
+                    float(state.corner_control_percent.value) / 100);
+      }
     }
   }
 }
