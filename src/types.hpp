@@ -54,9 +54,9 @@ using PatternFill = map<Point, vector<Triangle>>;
 // The GuiValueBox() provided by raygui requires a place to store the current
 // value before pressing <Enter> and a place to store if it's being edited.
 struct IntInputValue {
-  int value;
   int tmp_value;
   bool edit;
+  int value;
 };
 
 } // namespace Types

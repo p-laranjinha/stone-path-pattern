@@ -51,6 +51,55 @@ void DrawFill(PatternFill fill, int max_edge_x, int max_edge_y, int width,
   }
 };
 
+void DrawCorners(PatternPolylines polylines, int max_edge_x, int max_edge_y,
+                 int thickness, int width, int height, int start_x, int start_y,
+                 raylib::Color color, float start_percent,
+                 float control_percent) {
+
+  for (auto [center, polyline] : polylines) {
+    for (int i = 0; i < polyline.size(); i++) {
+      Point curr = polyline[i];
+
+      Point prev = (i != 0) ? polyline[i - 1] : polyline.back();
+      Point prev_point = {
+          (curr[0] > prev[0]) ? curr[0] - (curr[0] - prev[0]) * start_percent
+                              : curr[0] + (prev[0] - curr[0]) * start_percent,
+          (curr[1] > prev[1]) ? curr[1] - (curr[1] - prev[1]) * start_percent
+                              : curr[1] + (prev[1] - curr[1]) * start_percent};
+      Point prev_control = {
+          (curr[0] > prev[0]) ? curr[0] - (curr[0] - prev[0]) * control_percent
+                              : curr[0] + (prev[0] - curr[0]) * control_percent,
+          (curr[1] > prev[1])
+              ? curr[1] - (curr[1] - prev[1]) * control_percent
+              : curr[1] + (prev[1] - curr[1]) * control_percent};
+
+      Point next = (i != polyline.size() - 1) ? polyline[i + 1] : polyline[0];
+      Point next_point = {
+          (curr[0] > next[0]) ? curr[0] - (curr[0] - next[0]) * start_percent
+                              : curr[0] + (next[0] - curr[0]) * start_percent,
+          (curr[1] > next[1]) ? curr[1] - (curr[1] - next[1]) * start_percent
+                              : curr[1] + (next[1] - curr[1]) * start_percent};
+      Point next_control = {
+          (curr[0] > next[0]) ? curr[0] - (curr[0] - next[0]) * control_percent
+                              : curr[0] + (next[0] - curr[0]) * control_percent,
+          (curr[1] > next[1])
+              ? curr[1] - (curr[1] - next[1]) * control_percent
+              : curr[1] + (next[1] - curr[1]) * control_percent};
+
+      DrawSplineSegmentBezierCubic(
+          {prev_point[0] * width / max_edge_x + start_x,
+           prev_point[1] * height / max_edge_y + start_y},
+          {prev_control[0] * width / max_edge_x + start_x,
+           prev_control[1] * height / max_edge_y + start_y},
+          {next_control[0] * width / max_edge_x + start_x,
+           next_control[1] * height / max_edge_y + start_y},
+          {next_point[0] * width / max_edge_x + start_x,
+           next_point[1] * height / max_edge_y + start_y},
+          thickness, color);
+    }
+  }
+}
+
 void DrawIntInput(IntInputValue &v, Rectangle bounds, int min, int max) {
   if (GuiSpinner(bounds, "", &v.tmp_value, min, max, v.edit)) {
     v.edit = !v.edit;

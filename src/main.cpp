@@ -23,21 +23,23 @@ float gui_input_width = gui_panel_width - gui_padding * 2;
 float text_size = 18;
 
 struct State {
-  IntInputValue thickness = {1, 1, false};
-  IntInputValue max_x = {15, 15, false};
-  IntInputValue max_y = {15, 15, false};
-  IntInputValue seed = {1, 1, false};
-  IntInputValue center_max_offset = {20, 20, false};
+  IntInputValue thickness = {5, false};
+  IntInputValue max_x = {15, false};
+  IntInputValue max_y = {15, false};
+  IntInputValue seed = {1, false};
+  IntInputValue center_max_offset = {20, false};
   int pattern_choice = 0;
   bool show_original_pattern = false;
   bool hide_pattern = false;
   bool highlight_boundary = false;
   Color base_color = raylib::Color(169, 169, 169);
   Color hover_color = raylib::Color(220, 120, 45);
+  IntInputValue corner_start_percent = {30, false};
+  IntInputValue corner_control_percent = {4, false};
 
   // Specific pattern options.
-  IntInputValue diagonal_chance = {50, 50, false};
-  IntInputValue right_diagonal_chance = {25, 25, false};
+  IntInputValue diagonal_chance = {50, false};
+  IntInputValue right_diagonal_chance = {25, false};
 
   bool operator==(const State &other) const {
     return thickness.value == other.thickness.value &&
@@ -56,6 +58,8 @@ struct State {
            hover_color.g == other.hover_color.g &&
            hover_color.b == other.hover_color.b &&
            hover_color.a == other.hover_color.a &&
+           corner_start_percent.value == other.corner_start_percent.value &&
+           corner_control_percent.value == other.corner_control_percent.value &&
            diagonal_chance.value == other.diagonal_chance.value &&
            right_diagonal_chance.value == other.right_diagonal_chance.value;
   }
@@ -64,7 +68,7 @@ struct State {
 struct Pattern {
   string name;
   function<PatternWire()> generator_func;
-  function<void()> gui_func;
+  function<void()> gui_func = [&]() -> void {};
 };
 
 float gui_start_x;
@@ -75,6 +79,7 @@ int pattern_height;
 PatternWire wire;
 PatternWire dual;
 PatternWire dual_with_boundary;
+PatternPolylines polylines;
 PatternFill pattern_fill;
 int pattern_scroll_index = 0;
 
@@ -98,20 +103,20 @@ int main() {
                                         100);
        },
        [&]() -> void {
-         GuiLabel({gui_start_x, gui_padding + text_size * 30,
+         GuiLabel({gui_start_x, gui_padding + text_size * 33,
                    gui_input_width / 2 - gui_spacing / 2, text_size},
                   "Diag. chance:");
          DrawIntInput(state.diagonal_chance,
-                      {gui_start_x, gui_padding + text_size * 31,
+                      {gui_start_x, gui_padding + text_size * 34,
                        gui_input_width / 2 - gui_spacing / 2, text_size},
                       0, 100);
          GuiLabel({gui_start_x + gui_input_width / 2 + gui_spacing / 2,
-                   gui_padding + text_size * 30,
+                   gui_padding + text_size * 33,
                    gui_input_width / 2 - gui_spacing / 2, text_size},
                   "Right d. chance:");
          DrawIntInput(state.right_diagonal_chance,
                       {gui_start_x + gui_input_width / 2 + gui_spacing / 2,
-                       gui_padding + text_size * 31,
+                       gui_padding + text_size * 34,
                        gui_input_width / 2 - gui_spacing / 2, text_size},
                       0, 100);
        }},
@@ -119,24 +124,20 @@ int main() {
        [&]() -> PatternWire {
          return alternatingTriangleGridPattern2(state.max_x.value,
                                                 state.max_y.value);
-       },
-       [&]() -> void {}},
+       }},
       {"Alternating triangle",
        [&]() -> PatternWire {
          return alternatingTriangleGridPattern(state.max_x.value,
                                                state.max_y.value);
-       },
-       [&]() -> void {}},
+       }},
       {"Triangle",
        [&]() -> PatternWire {
          return triangleGridPattern(state.max_x.value, state.max_y.value);
-       },
-       [&]() -> void {}},
+       }},
       {"Grid",
        [&]() -> PatternWire {
          return gridPattern(state.max_x.value, state.max_y.value);
-       },
-       [&]() -> void {}},
+       }},
   };
   for (int i = 0; i < patterns.size(); i++) {
     pattern_choices += patterns[i].name;
@@ -187,7 +188,7 @@ void GeneratePattern() {
   wire = patterns[state.pattern_choice].generator_func();
   randomizeCenterPositions(wire, float(state.center_max_offset.value) / 100);
   if (state.show_original_pattern && state.hide_pattern) {
-    PatternPolylines polylines = wireToPolylines(wire);
+    polylines = wireToPolylines(wire);
     pattern_fill = polylinesTriangulation(polylines);
   }
   if (!state.hide_pattern) {
@@ -195,11 +196,11 @@ void GeneratePattern() {
         dualMeshWithBoundary(wire, float(state.center_max_offset.value) / 100,
                              state.max_x.value, state.max_y.value);
     if (!state.highlight_boundary) {
-      PatternPolylines polylines = wireToPolylines(dual_with_boundary);
+      polylines = wireToPolylines(dual_with_boundary);
       pattern_fill = polylinesTriangulation(polylines);
     } else {
       dual = dualMesh(wire);
-      PatternPolylines polylines = wireToPolylines(dual);
+      polylines = wireToPolylines(dual);
       pattern_fill = polylinesTriangulation(polylines);
     }
   }
@@ -213,6 +214,12 @@ void DrawPattern() {
     DrawEdges(wire, state.max_x.value, state.max_y.value, state.thickness.value,
               pattern_width, pattern_height, padding, padding,
               raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+    DrawCorners(polylines, state.max_x.value, state.max_y.value,
+                state.thickness.value, pattern_width, pattern_height, padding,
+                padding,
+                raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
+                float(state.corner_start_percent.value) / 100,
+                float(state.corner_control_percent.value) / 100);
   }
   if (!state.hide_pattern) {
     if (!state.highlight_boundary) {
@@ -229,6 +236,12 @@ void DrawPattern() {
                 state.thickness.value, pattern_width, pattern_height, padding,
                 padding,
                 raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+      DrawCorners(polylines, state.max_x.value, state.max_y.value,
+                  state.thickness.value, pattern_width, pattern_height, padding,
+                  padding,
+                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
+                  float(state.corner_start_percent.value) / 100,
+                  float(state.corner_control_percent.value) / 100);
     } else {
       DrawFill(pattern_fill, state.max_x.value, state.max_y.value,
                pattern_width, pattern_height, padding, padding,
@@ -247,6 +260,12 @@ void DrawPattern() {
                 state.thickness.value, pattern_width, pattern_height, padding,
                 padding,
                 raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)));
+      DrawCorners(polylines, state.max_x.value, state.max_y.value,
+                  state.thickness.value, pattern_width, pattern_height, padding,
+                  padding,
+                  raylib::Color(GuiGetStyle(DEFAULT, BORDER_COLOR_PRESSED)),
+                  float(state.corner_start_percent.value) / 100,
+                  float(state.corner_control_percent.value) / 100);
     }
   }
 }
@@ -295,49 +314,66 @@ void DrawDefaultGUI() {
 
   GuiLabel({gui_start_x, gui_padding + text_size * 9,
             gui_input_width / 2 - gui_spacing / 2, text_size},
+           "Corner start * 100:");
+  DrawIntInput(state.corner_start_percent,
+               {gui_start_x, gui_padding + text_size * 10,
+                gui_input_width / 2 - gui_spacing / 2, text_size},
+               -99999, 99999);
+  GuiLabel({gui_start_x + gui_input_width / 2 + gui_spacing / 2,
+            gui_padding + text_size * 9, gui_input_width / 2 - gui_spacing / 2,
+            text_size},
+           "Corner control * 100:");
+  DrawIntInput(state.corner_control_percent,
+               {gui_start_x + gui_input_width / 2 + gui_spacing / 2,
+                gui_padding + text_size * 10,
+                gui_input_width / 2 - gui_spacing / 2, text_size},
+               -99999, 99999);
+
+  GuiLabel({gui_start_x, gui_padding + text_size * 12,
+            gui_input_width / 2 - gui_spacing / 2, text_size},
            "Seed:");
   DrawIntInput(state.seed,
-               {gui_start_x, gui_padding + text_size * 10,
+               {gui_start_x, gui_padding + text_size * 13,
                 gui_input_width / 2 - gui_spacing / 2, text_size},
                1, 99999);
   GuiLabel({gui_start_x + gui_input_width / 2 + gui_spacing / 2,
-            gui_padding + text_size * 9, gui_input_width / 2 - gui_spacing / 2,
+            gui_padding + text_size * 12, gui_input_width / 2 - gui_spacing / 2,
             text_size},
            "Max point offset * 100:");
   DrawIntInput(state.center_max_offset,
                {gui_start_x + gui_input_width / 2 + gui_spacing / 2,
-                gui_padding + text_size * 10,
+                gui_padding + text_size * 13,
                 gui_input_width / 2 - gui_spacing / 2, text_size},
                0, 100);
 
   GuiLabel(
-      {gui_start_x, gui_padding + text_size * 12, gui_input_width, text_size},
+      {gui_start_x, gui_padding + text_size * 15, gui_input_width, text_size},
       "Base color:");
   GuiColorPicker(
-      {gui_start_x, gui_padding + text_size * 13, text_size * 7, text_size * 7},
+      {gui_start_x, gui_padding + text_size * 16, text_size * 7, text_size * 7},
       "", &state.base_color);
   GuiLabel(
-      {gui_start_x, gui_padding + text_size * 19, gui_input_width, text_size},
+      {gui_start_x, gui_padding + text_size * 22, gui_input_width, text_size},
       format("{},{},{}", state.base_color.r, state.base_color.g,
              state.base_color.b)
           .c_str());
 
-  GuiLabel({gui_start_x + gui_input_width / 2, gui_padding + text_size * 12,
+  GuiLabel({gui_start_x + gui_input_width / 2, gui_padding + text_size * 15,
             gui_input_width, text_size},
            "Hover color:");
   GuiColorPicker({gui_start_x + gui_input_width / 2,
-                  gui_padding + text_size * 13, text_size * 7, text_size * 7},
+                  gui_padding + text_size * 16, text_size * 7, text_size * 7},
                  "", &state.hover_color);
-  GuiLabel({gui_start_x + gui_input_width / 2, gui_padding + text_size * 19,
+  GuiLabel({gui_start_x + gui_input_width / 2, gui_padding + text_size * 22,
             gui_input_width, text_size},
            format("{},{},{}", state.hover_color.r, state.hover_color.g,
                   state.hover_color.b)
                .c_str());
 
   GuiLabel(
-      {gui_start_x, gui_padding + text_size * 21, gui_input_width, text_size},
+      {gui_start_x, gui_padding + text_size * 24, gui_input_width, text_size},
       "Pattern:");
-  GuiListView({gui_start_x, gui_padding + text_size * 22, gui_input_width,
+  GuiListView({gui_start_x, gui_padding + text_size * 25, gui_input_width,
                text_size * 7},
               pattern_choices.c_str(), &pattern_scroll_index,
               &state.pattern_choice);
